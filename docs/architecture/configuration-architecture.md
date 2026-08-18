@@ -355,7 +355,7 @@ The default precedence is:
 
 Higher-precedence values override lower-precedence values where the configuration domain permits overriding.
 
-Configuration domains may restrict which layers are permitted to provide or override particular values. For example, a theme may provide colours and fonts but should not silently change the user's selected compositor.
+Configuration domains may restrict which layers are permitted to provide or override particular values. For example, a theme may provide colors and fonts but should not silently change the user's selected compositor.
 
 The precedence and ownership rules for non-trivial configuration domains must be documented.
 
