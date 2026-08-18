@@ -158,7 +158,7 @@ The initial implementation should prefer a format that is:
 
 The architecture does not permanently mandate one serialization format. The configuration model is the architectural contract; the storage format is an implementation detail.
 
-For the initial implementation, a structured text format such as YAML or TOML may be used, provided the selected format has deterministic parsing and a well-defined schema.
+For the initial implementation, the structured text format TOML will be used, provided the format provides deterministic parsing and a well-defined specification. MOSAIC will define its own schema independently of the serialization format.
 
 Generated provider configuration does not need to use the same format as MOSAIC configuration.
 
@@ -166,13 +166,13 @@ For example:
 
 ```text
 ~/.config/mosaic/
-├── config.yaml              # User-owned MOSAIC configuration
+├── config.toml              # User-owned MOSAIC configuration
 ├── profiles/
-│   └── desktop.yaml         # Profile definitions
+│   └── desktop.toml         # Profile definitions
 ├── themes/
-│   └── default.yaml         # Theme definitions
+│   └── default.toml         # Theme definitions
 ├── layouts/
-│   └── default.yaml         # Layout definitions
+│   └── default.toml         # Layout definitions
 └── overrides/               # Optional explicit user overrides
 ```
 
@@ -192,13 +192,7 @@ This is the user's declared MOSAIC configuration and is the primary source of in
 
 MOSAIC must not silently overwrite user-owned configuration when applying or regenerating configuration.
 
-### 5.2 MOSAIC-managed configuration
-
-MOSAIC may maintain internal state required to manage the configuration system, such as cached resolution information, generated metadata, or migration state.
-
-MOSAIC-managed state may be recreated and should not be treated as the user's configuration source of truth.
-
-### 5.3 Provider-generated configuration
+### 5.2 Provider-generated configuration
 
 Provider-generated configuration is produced from the resolved MOSAIC model for consumption by external software.
 
@@ -349,37 +343,21 @@ Defaults are lower precedence than explicit user configuration.
 
 ---
 
-## 10. Precedence
+## 10. Configuration precedence
 
-When multiple configuration sources provide the same value, MOSAIC resolves them using a deterministic precedence order.
+MOSAIC may combine configuration from multiple layers, including built-in defaults, component defaults, profiles, themes, user configuration, and explicit user overrides.
 
-The default precedence model is:
+When multiple applicable layers define the same value, MOSAIC resolves the value using a deterministic precedence order.
 
-```text
-Lowest precedence
-    ↓
-Built-in defaults
-    ↓
-Component defaults
-    ↓
-Profile configuration
-    ↓
-Theme / Layout contributions
-    ↓
-User configuration
-    ↓
-Explicit user overrides
-    ↓
-Highest precedence
-```
+The default precedence is:
 
-Not every configuration value participates in every layer.
+**Built-in defaults → component defaults → profiles/themes → user configuration → explicit user overrides**
 
-Where a value has a defined owner, that ownership determines whether another layer is allowed to override it.
+Higher-precedence values override lower-precedence values where the configuration domain permits overriding.
 
-For example, a theme may provide a color but should not silently replace the selected compositor.
+Configuration domains may restrict which layers are permitted to provide or override particular values. For example, a theme may provide colours and fonts but should not silently change the user's selected compositor.
 
-Precedence must be deterministic and documented for each configuration domain where merging is non-trivial.
+The precedence and ownership rules for non-trivial configuration domains must be documented.
 
 ---
 
