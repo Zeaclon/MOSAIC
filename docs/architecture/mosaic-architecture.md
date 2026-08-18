@@ -117,7 +117,7 @@ Providers and integrations translate that model into the concrete technologies a
 
 MOSAIC is composed of several major conceptual subsystems.
 
-these boundaries describe responsibilities rather than necessarily representing separate processes or packages.
+These boundaries describe responsibilities rather than necessarily representing separate processes or packages.
 
 ### 4.1 MOSAIC Core
 
@@ -194,7 +194,7 @@ MOSAIC Compositor
 Providers are responsible for translating MOSAIC's abstract configuration into implementation-specific configuration.
 
 This creates an important boundary:
-> **MOSAIC describes what the user wants. Provders determine how the underlying software implements it.**
+> **MOSAIC describes what the user wants. Providers determine how the underlying software implements it.**
 
 ---
 
@@ -275,7 +275,8 @@ Themes may control things such as:
 
 Themes should remain conceptually separate from the components they modify.
 
-for example:
+For example:
+
 ```
 Profile
     +
@@ -305,7 +306,7 @@ Top Bar
 └── Clock
 ```
 
-A provider may then translate what abstract layout into Waybar, Quickshell, or another implementation.
+A provider may then translate what the abstract layout into Waybar, Quickshell, or another implementation.
 
 ---
 
@@ -365,9 +366,9 @@ Waybar component
 Hyprland configuration files
 ```
 
-Should not be required merely becuase both components happen to be used together.
+Should not be required merely because both components happen to be used together.
 
-Where communication is necessary, it should occur through a defined interface or intefration mechanism.
+Where communication is necessary, it should occur through a defined interface or integration mechanism.
 
 ---
 
@@ -470,7 +471,7 @@ Implementation-specific details should remain as close as possible to the implem
 
 A MOSAIC configuration should contain enough information to describe the intended desktop state.
 
-Reproducibility should evenrually allow a user to:
+Reproducibility should eventually allow a user to:
 
 ```
 Export configuration
@@ -603,11 +604,11 @@ Architecture should evolve deliberately rather than through accidental coupling 
 
 ## 26. Summary
 
-MOSAIC is structured around a simple principl:
+MOSAIC is structured around a simple principle:
 
 > **MOSAIC defines the desktop configuration; implementations provide the means to realize it.**
 
-the architecture therefor separates:
+the architecture therefore separates:
 ```
 User Intent
     ↓
