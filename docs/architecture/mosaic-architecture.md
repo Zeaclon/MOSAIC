@@ -254,7 +254,7 @@ Profile
 └── Keybindings
 ```
 
-Profiles should reference components and configuration rather than containing implementation specific logic themselves.
+Profiles should reference components and configuration rather than containing implementation-specific logic themselves.
 
 Profiles should therefore remain portable between compatible environments.
 
