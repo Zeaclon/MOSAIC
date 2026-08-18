@@ -405,8 +405,8 @@ A scalar value has one effective value after precedence resolution.
 
 Example:
 
-```yaml
-position: bottom
+```toml
+position = "bottom"
 ```
 
 The highest-precedence valid value wins.
@@ -436,12 +436,14 @@ Components should normally be identified by stable component IDs rather than lis
 
 For example:
 
-```yaml
-components:
-  - id: status-bar
-    provider: waybar
-  - id: launcher
-    provider: rofi
+```toml
+[[components]]
+id = "status-bar"
+provider = "waybar"
+
+[[components]]
+id = "launcher"
+provider = "rofi"
 ```
 
 This allows configuration to refer to a component independently of its position in a file.
@@ -488,16 +490,13 @@ A component configuration should contain only information meaningful at the MOSA
 
 Conceptually:
 
-```yaml
-component:
-  id: status-bar
-  provider: waybar
-  enabled: true
-  position: top
-  modules:
-    - workspaces
-    - window
-    - clock
+```toml
+[component]
+id = "status-bar"
+provider = "waybar"
+enabled = true
+position = "top"
+modules = ["workspaces", "window", "clock"]
 ```
 
 The component model is passed to the selected provider.
@@ -524,13 +523,14 @@ Providers may therefore expose an explicitly scoped provider-specific configurat
 
 For example:
 
-```yaml
-component:
-  id: status-bar
-  provider: waybar
-  options:
-    layer: top
-    ipc: true
+```toml
+[component]
+id = "status-bar"
+provider = "waybar"
+
+[component.options]
+layer = "top"
+ipc = true
 ```
 
 Provider-specific options belong to the provider namespace and must not leak into the generic MOSAIC component model.
@@ -706,8 +706,8 @@ MOSAIC configuration should carry a schema version.
 
 For example:
 
-```yaml
-version: 1
+```toml
+version = 1
 ```
 
 The version identifies the configuration schema, not the MOSAIC application version.
