@@ -384,7 +384,7 @@ The architecture should preserve a distinction between:
 - Provider-generated configuration
 - External application state
 
-This distinction is essential for reproducibility and  user control.
+This distinction is essential for reproducibility and user control.
 
 ---
 
