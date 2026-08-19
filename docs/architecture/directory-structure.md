@@ -1,15 +1,15 @@
 # MOSAIC Directory Structure
 
-**Status:** Proposed  
-**Issue:** #3 — Define MOSAIC directory structure
+**Status**: Proposed
+**Issue**: #3 — Define MOSAIC directory structure
 
 ## 1. Purpose
 
-This document defines the directory structure used by MOSAIC across its source repository, installed resources, user configuration, generated configuration, persistent state, runtime data, backups, and documentation.
+This document defines the directory structure used by MOSAIC across its source repository, installed resources, system configuration, user configuration, generated configuration, persistent state, runtime data, backups, cache data, and documentation.
 
 The directory structure exists to support the principles established by the MOSAIC architecture and configuration architecture:
 
-- MOSAIC is modular and component-oriented.
+MOSAIC is modular and component-oriented.
 - User configuration is separate from generated configuration.
 - Built-in resources are separate from user-owned resources.
 - Generated files are implementation artifacts rather than the source of truth.
@@ -30,21 +30,7 @@ The MOSAIC filesystem structure follows several principles.
 
 Files should have a clear owner.
 
-```text
-MOSAIC source
-    ↓
-Built-in resources
-    ↓
-System installation
-    ↓
-User configuration
-    ↓
-Resolved configuration
-    ↓
-Generated output
-    ↓
-Runtime state
-```
+MOSAIC-provided resources, system configuration, user configuration, generated output, persistent state, cache data, backups, and runtime data must remain separate.
 
 User-owned files must not be overwritten by MOSAIC updates or configuration generation.
 
@@ -80,9 +66,6 @@ MOSAIC/
 │       ├── core/
 │       ├── configuration/
 │       ├── components/
-│       ├── profiles/
-│       ├── themes/
-│       ├── layouts/
 │       ├── providers/
 │       └── runtime/
 │
@@ -114,16 +97,21 @@ MOSAIC/
 
 The exact implementation language and package layout are outside the scope of this document.
 
-The important architectural distinction is between **MOSAIC core code**, **reusable MOSAIC resources**, **documentation**, and **tests**.
+The important architectural distinction is:
+- `src/` contains the executable MOSAIC implementation.
+- `resources/` contains declarative MOSAIC resources supplied by the project.
+- `docs/` contains project documentation.
+- `tests/` contains automated tests.
+
+Profiles, themes, layouts, and component definitions are MOSAIC resources rather than separate categories of core application code.
 
 ---
 
 ## 4. Source Code
 
 MOSAIC source code belongs under:
-```
-src/
-```
+
+`src/`
 
 The source tree should contain the implementation of MOSAIC itself.
 
@@ -133,14 +121,11 @@ src/mosaic/
 ├── core/
 ├── configuration/
 ├── components/
-├── profiles/
-├── themes/
-├── layouts/
 ├── providers/
 └── runtime/
 ```
 
-```core/```
+`core/`
 
 Contains functionality fundamental to MOSAIC itself.
 
@@ -154,19 +139,19 @@ Examples include:
 
 Core code must not contain provider-specific implementation details unless those details are part of an explicitly defined abstraction.
 
-```configuration/```
+`configuration/`
 
 Contains configuration loading, parsing, validation, resolution, precedence, and related functionality.
 
 This area implements the configuration architecture defined separately in the MOSAIC configuration architecture document.
 
-```components/```
+`components/`
 
-Contains the implementation of MOSAIC component concepts.
+Contains the implementation of MOSAIC component concepts and the abstractions required to manage them.
 
 Components should describe what a desktop function represents rather than being tightly coupled to one external application.
 
-```providers/```
+`providers/`
 
 Contains integrations with external applications.
 
@@ -181,7 +166,7 @@ Examples may eventually include providers for:
 
 Provider code translates MOSAIC's resolved configuration into implementation-specific configuration.
 
-```runtime/```
+`runtime/`
 
 Contains functionality concerned with active MOSAIC operation and runtime state.
 
@@ -193,9 +178,7 @@ Runtime code should not become the source of truth for persistent user configura
 
 Reusable resources supplied by MOSAIC belong under:
 
-```
-resources/
-```
+`resources/`
 
 Conceptually:
 ```
@@ -212,9 +195,9 @@ They are not user-owned configuration.
 
 ### Components
 
-``` resources/components```
+`resources/components/`
 
-Comtains built-in component definitions.
+Contains built-in component definitions.
 
 Examples:
 ```
@@ -228,9 +211,9 @@ resources/components/
 
 ### Profiles
 
-``` resources/profiles/```
+`resources/profiles/`
 
-Contains built-in profiles describing collections of components.
+Contains built-in profiles describing collections of components and configuration choices.
 
 Examples:
 ```
@@ -242,9 +225,9 @@ resources/profiles/
 
 ### Themes
 
-```resources/themes/```
+`resources/themes/`
 
-Contains built-in visual themes
+Contains built-in visual themes.
 
 Examples:
 ```
@@ -256,7 +239,7 @@ resources/themes/
 
 ### Layouts
 
-```resources/layouts/```
+`resources/layouts/`
 
 Contains built-in layout definitions.
 
@@ -266,11 +249,11 @@ Resources should be identified using stable names or IDs rather than relying on 
 
 ## 6. Installed MOSAIC Resources
 
-Built-in MOSAIC resources should be installed separately from user configuration.
+Built-in MOSAIC resources should be installed separately from configuration.
 
 The intended system-wide resource location is:
 
-```/usr/share/mosaic/```
+`/usr/share/mosaic/`
 
 Conceptually:
 ```
@@ -295,29 +278,28 @@ This allows MOSAIC packages to update built-in resources without destroying user
 
 System-level MOSAIC configuration belongs under:
 
-```/etc/mosaic/```
+`/etc/mosaic/`
 
-Conceptually:
+The initial system configuration location is intentionally kept minimal:
+
 ```
 /etc/mosaic/
-├── config.toml
-├── profiles/
-├── themes/
-├── layouts/
-└── overrides/
+└── config.toml
 ```
 
-System configuration is intended for configuration that applies outside a single user's home directory.
+Additional system-level configuration files or directories may be introduced if required by later architectural decisions.
+
+System configuration applies outside a single user's home directory and is administrator-controlled.
 
 System configuration must remain separate from:
 
-```/usr/share/mosaic/```
+`/usr/share/mosaic/`
 
 because installed resources and configuration have different ownership and lifecycle rules.
 
-```/usr/share/mosaic/``` contains resources supplied by MOSAIC.
+`/usr/share/mosaic/` contains resources supplied by MOSAIC.
 
-```/etc/mosaic/``` contains administrator-controlled configuration.
+`/etc/mosaic/` contains administrator-controlled configuration.
 
 ---
 
@@ -325,7 +307,7 @@ because installed resources and configuration have different ownership and lifec
 
 User-owned MOSAIC configuration belongs under:
 
-```~/.config/mosaic/```
+`~/.config/mosaic/`
 
 This is the primary location for user configuration.
 
@@ -333,64 +315,56 @@ Conceptually:
 ```
 ~/.config/mosaic/
 ├── config.toml
+├── components/
 ├── profiles/
 ├── themes/
 ├── layouts/
-├── components/
 └── overrides/
 ```
+
+Profiles, themes, layouts, and component definitions are MOSAIC resources that may contribute to configuration. User-owned instances of those resources are stored under ~/.config/mosaic/.
 
 The user's MOSAIC configuration is the source of truth for their configuration intent.
 
 MOSAIC must not silently replace or regenerate these files as though they were generated configuration.
 
----
-
 ### 8.1 User Components
 
 User-defined or user-customized component definitions may be stored under:
 
-```~/.config/mosaic/components/```
+`~/.config/mosaic/components/`
 
 These resources can extend or override built-in resources according to the configuration precedence rules.
-
----
 
 ### 8.2 User Profiles
 
 User-defined profiles belong under:
 
-```~/.config/mosaic/profiles/```
+`~/.config/mosaic/profiles/`
 
 A user should be able to create a profile without modifying the corresponding built-in MOSAIC profile.
-
----
 
 ### 8.3 User Themes
 
 User-defined themes belong under:
 
-```~/.config/mosaic/themes/```
+`~/.config/mosaic/themes/`
 
 This allows users to create and maintain their own visual configurations independently of built-in themes.
-
----
 
 ### 8.4 User Layouts
 
 User-defined layouts belong under:
 
-```~/.config/mosaic/layouts/```
+`~/.config/mosaic/layouts/`
 
 Layouts should remain independent of provider-specific generated configuration.
-
----
 
 ### 8.5 User Overrides
 
 Explicit user overrides belong under:
 
-```~/.config/mosaic/overrides/```
+`~/.config/mosaic/overrides/`
 
 Overrides provide a deliberate mechanism for changing values supplied by built-in resources, profiles, themes, layouts, or defaults.
 
@@ -402,17 +376,17 @@ They should not depend on undocumented file ordering.
 
 Persistent MOSAIC application data that is not configuration belongs under:
 
-```~/.local/share/mosaic/```
+`~/.local/share/mosaic/`
 
 This location is intended for persistent data that MOSAIC needs to retain but that does not represent configuration.
 
 Examples may eventually include:
 - Resource metadata
 - Downloaded resources
-- Cached persistent assets
+- Persistent application assets
 - User-created data that is not configuration
 
-Configuration should not be stored here when it belongs under ```~/.config/mosaic/```.
+Configuration should not be stored here when it belongs under `~/.config/mosaic/`.
 
 ---
 
@@ -428,54 +402,51 @@ For example:
 ├── hyprland.conf
 └── mosaic.conf
 ```
+
 where:
-
-```hyprland.conf```
-
-remains user-owned while:
-
-```mosaic.conf```
-
-is generated by MOSAIC.
+- `hyprland.conf` remains user-owned.
+- `mosaic.conf` is generated by MOSAIC.
 
 Where practical, generated files should contain a marker such as:
 
-```# Generated by MOSAIC. Do not edit directly.```
+`# Generated by MOSAIC. Do not edit directly.`
 
 Generated configuration is derived from resolved MOSAIC configuration and may be regenerated at any time.
 
 It must therefore never be treated as the primary source of truth.
 
+Provider-facing generated files belong wherever the provider requires them. They are not part of MOSAIC's authoritative configuration hierarchy.
+
 ---
 
-## 11. Generated State
+## 11. Generated and Persistent State
 
 MOSAIC's own generated or persistent state belongs under:
 
-```~/.local/state/mosaic/```
+`~/.local/state/mosaic/`
 
-Conceptually:
+This location is for MOSAIC state that is neither user configuration nor provider-facing configuration.
+
+A possible structure is:
 ```
 ~/.local/state/mosaic/
 ├── generated/
 └── backups/
 ```
 
-This location is distinct from both:
+generated/ is reserved for MOSAIC-internal generated or intermediate state where such state is required by the implementation.
 
-```~/.config/mosaic/```
+Provider-facing generated configuration should not be duplicated here unless there is a specific architectural reason to do so.
 
-and:
+If later implementation work establishes that a directory is unnecessary, it should not be created merely because it appears in this proposal.
 
-```~/.local/share/mosaic/```
-
-because generated state and configuration have different purposes.
+---
 
 ## 12. Backups
 
 MOSAIC-managed backups belong under:
 
-~/.local/state/mosaic/backups/
+`~/.local/state/mosaic/backups/`
 
 Backups may contain previous versions of generated configuration or other files MOSAIC has modified as part of an application operation.
 
@@ -499,7 +470,7 @@ Backups exist to support recovery and rollback.
 
 Ephemeral runtime data belongs under the standard Linux runtime hierarchy:
 
-```/run/mosaic/```
+`/run/mosaic/`
 
 Runtime data may include:
 - PID files
@@ -510,7 +481,7 @@ Runtime data may include:
 
 Runtime data should not survive system shutdown unless explicitly required.
 
-MOSAIC must not use ```/run/mosaic/``` as a persistent configuration location.
+MOSAIC must not use `/run/mosaic/` as a persistent configuration location.
 
 ---
 
@@ -518,7 +489,7 @@ MOSAIC must not use ```/run/mosaic/``` as a persistent configuration location.
 
 Cache data should use the standard user cache location:
 
-```~/.cache/mosaic/```
+`~/.cache/mosaic/`
 
 Cache data may include:
 - Temporary downloaded resources
@@ -536,23 +507,23 @@ MOSAIC must never rely on cache data as the only copy of user configuration or p
 
 Project documentation belongs under:
 
-```docs/```
+`docs/`
 
 Architecture documentation belongs under:
 
-```docs/architecture/```
+`docs/architecture/`
 
 Configuration documentation belongs under:
 
-```docs/configuration/```
+`docs/configuration/`
 
 Component documentation may belong under:
 
-```docs/components/```
+`docs/components/`
 
 User-facing guides belong under:
 
-```docs/guides/```
+`docs/guides/`
 
 Documentation should explain architectural contracts and expected behavior without becoming a substitute for the implementation itself.
 
@@ -560,34 +531,47 @@ Documentation should explain architectural contracts and expected behavior witho
 
 ## 16. Directory Ownership Model
 
-The overall ownership model can be summarized as:
+The filesystem layout and configuration flow are related but distinct concerns.
+
+### Filesystem ownership
 ```
 /usr/share/mosaic/          MOSAIC-provided resources
-        │
-        ▼
+
 /etc/mosaic/                System configuration
-        │
-        ▼
-~/.config/mosaic/           User configuration
-        │
-        ▼
-Resolved MOSAIC state
-        │
-        ├──> Provider-generated configuration
-        │
-        └──> ~/.local/state/mosaic/
-                    │
-                    ├── generated/
-                    └── backups/
+
+~/.config/mosaic/           User configuration and user-owned resources
 
 ~/.local/share/mosaic/      Persistent application data
+
+~/.local/state/mosaic/      MOSAIC state and backups
 
 ~/.cache/mosaic/            Regenerable cache data
 
 /run/mosaic/                Ephemeral runtime data
 ```
 
-Each location has a distinct responsibility.
+### Configuration flow
+```
+Built-in resources
+        │
+        ├── System configuration
+        │
+        └── User configuration
+                │
+                ▼
+       Explicit overrides
+                │
+                ▼
+       Resolved MOSAIC configuration
+                │
+                ▼
+       Provider-generated configuration
+                │
+                ▼
+        External applications
+```
+
+Runtime state, cache data, persistent application data, and backups support MOSAIC operation but are not steps in the configuration-resolution pipeline.
 
 ---
 
@@ -624,19 +608,19 @@ The directory structure must allow MOSAIC to be updated without destroying user 
 
 For example:
 
-```/usr/share/mosaic/themes/dark/```
+`/usr/share/mosaic/themes/dark/`
 
 may be replaced by a future MOSAIC package update.
 
 The user's:
 
-```~/.config/mosaic/themes/dark/```
+`~/.config/mosaic/themes/dark/`
 
 must remain unaffected.
 
 Likewise, a user-created:
 
-```~/.config/mosaic/profiles/workstation/```
+`~/.config/mosaic/profiles/workstation/`
 
 must not be overwritten by changes to the built-in profiles.
 
@@ -650,7 +634,7 @@ MOSAIC provider implementations must not require users to place provider-specifi
 
 For example, Waybar configuration should not require:
 
-```~/.config/mosaic/waybar/```
+`~/.config/mosaic/waybar/`
 
 unless the provider explicitly defines such a location.
 
@@ -658,18 +642,17 @@ Instead, the provider should translate the MOSAIC configuration model into the c
 
 This preserves the distinction between:
 
-```MOSAIC configuration```
+`MOSAIC configuration`
 
 and:
 
-```Provider configuration```
+`Provider configuration`
 
 and prevents MOSAIC from becoming a collection of unrelated application configuration files.
 
 ---
 
 ## 20. What Must Not Be Stored in Each Location
-
 | Location                 | Must not contain                                     |
 | ------------------------ | ---------------------------------------------------- |
 | `/usr/share/mosaic/`     | User configuration or mutable runtime state          |
@@ -680,7 +663,7 @@ and prevents MOSAIC from becoming a collection of unrelated application configur
 | `~/.cache/mosaic/`       | Data required to reconstruct user configuration      |
 | `/run/mosaic/`           | Persistent configuration or long-term backups        |
 
-The purpose of these restricitons is to keep ownership and lifecycle predictable.
+The purpose of these restrictions is to keep ownership and lifecycle predictable.
 
 ---
 
@@ -691,12 +674,21 @@ The resulting MOSAIC filesystem architecture is:
 Repository
 MOSAIC/
 ├── src/
+│   └── mosaic/
+│       ├── core/
+│       ├── configuration/
+│       ├── components/
+│       ├── providers/
+│       └── runtime/
 ├── resources/
+│   ├── components/
+│   ├── profiles/
+│   ├── themes/
+│   └── layouts/
 ├── docs/
 ├── tests/
 ├── packaging/
 └── scripts/
-
 
 System
 /usr/share/mosaic/
@@ -706,13 +698,7 @@ System
 └── layouts/
 
 /etc/mosaic/
-├── config.toml
-├── profiles/
-├── themes/
-├── layouts/
-├── components/
-└── overrides/
-
+└── config.toml
 
 User
 ~/.config/mosaic/
@@ -726,7 +712,6 @@ User
 ~/.local/share/mosaic/
 
 ~/.local/state/mosaic/
-├── generated/
 └── backups/
 
 ~/.cache/mosaic/
@@ -739,8 +724,9 @@ This structure provides clear separation between:
 - Built-in resources
 - System configuration
 - User configuration
+- User-owned resources
 - User overrides
-- Generated configuration
+- Generated provider configuration
 - Persistent application data
 - Cache data
 - Backups
@@ -759,4 +745,4 @@ The key architectural rule is:
 
 This separation allows MOSAIC to remain modular, reproducible, updateable, and safe for user customization while avoiding destructive ownership conflicts with the applications it manages.
 
-The exact implementation of individual directories may evolve as MOSAIC develops, but the ownership and lifecycle boundaries defined by this document should remain stabl
+The exact implementation of individual directories may evolve as MOSAIC develops, but the ownership and lifecycle boundaries defined by this document should remain stable.
