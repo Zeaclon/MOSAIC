@@ -12,6 +12,8 @@ MOSAIC is intentionally designed around a constrained and predictable base envir
 
 Support may be expanded in future releases as the project matures.
 
+---
+
 ## 2. Officially Supported Environment
 
 The initial release of MOSAIC officially supports the following environment:
