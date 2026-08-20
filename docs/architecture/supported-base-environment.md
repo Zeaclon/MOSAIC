@@ -45,7 +45,7 @@ The initial release does not guarantee compatibility with Arch-based distributio
 
 These distributions may work, but they are not considered officially supported unless explicitly added in a future release.
 
-## 4. Display Server and Compositor
+## 4. Display Protocol and Compositor
 
 ### Wayland
 
