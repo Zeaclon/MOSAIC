@@ -33,6 +33,8 @@ The initial release of MOSAIC officially supports the following environment:
 
 This environment represents the primary development and testing target for MOSAIC.
 
+---
+
 ## 3. Distribution
 
 ### Arch Linux
@@ -46,6 +48,8 @@ MOSAIC may depend on packages provided through the Arch Linux package ecosystem.
 The initial release does not guarantee compatibility with Arch-based distributions such as Manjaro, EndeavourOS, Garuda Linux, or other derivatives.
 
 These distributions may work, but they are not considered officially supported unless explicitly added in a future release.
+
+---
 
 ## 4. Display Protocol and Compositor
 
@@ -63,6 +67,8 @@ MOSAIC's initial component architecture and configuration model are designed aro
 
 Future versions may support additional compositors where practical, but compositor independence is not a requirement for the initial release.
 
+---
+
 ## 5. Required Runtime Environment
 
 MOSAIC assumes a modern Linux system providing the following foundational services:
@@ -76,6 +82,8 @@ MOSAIC assumes a modern Linux system providing the following foundational servic
 * XDG desktop portals where required for applications and desktop integration.
 
 Individual MOSAIC components may introduce additional runtime dependencies. These dependencies should be documented by the relevant component rather than treated as universal MOSAIC requirements.
+
+---
 
 ## 6. Hardware Assumptions
 
@@ -94,6 +102,8 @@ MOSAIC does not guarantee identical behaviour across all GPU vendors, driver ver
 
 Hardware-specific compatibility issues are outside the primary scope of the initial release unless they directly affect a supported configuration.
 
+---
+
 ## 7. Explicitly Unsupported Environments
 
 The following environments are outside the official scope of the initial release:
@@ -109,6 +119,8 @@ The following environments are outside the official scope of the initial release
 
 An unsupported environment may still be capable of running MOSAIC. However, successful operation in such an environment should not be considered a project compatibility guarantee.
 
+---
+
 ## 8. Support Policy
 
 Official support means that the MOSAIC project will design, document, and test the initial release against the defined base environment.
@@ -118,6 +130,8 @@ Issues that occur within the supported environment should be considered valid co
 Issues that occur exclusively within unsupported environments may be closed as outside the project's current support scope.
 
 Expanding the supported environment is a deliberate project decision and should occur through a future architecture or compatibility review rather than through undocumented, ad-hoc support.
+
+---
 
 ## 9. Future Expansion
 
@@ -132,6 +146,8 @@ Future releases may expand support to additional:
 * Desktop integration environments.
 
 Such expansion should occur only when MOSAIC's architecture can support the additional environment without compromising maintainability or the reliability of the existing supported configuration.
+
+---
 
 ## 10. Summary
 
