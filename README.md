@@ -6,7 +6,7 @@ MOSAIC is a modular Linux desktop configuration framework designed to make build
 
 Rather than treating a desktop configuration as a single collection of static dotfiles. Mosaic is designed around independent, reusable components that can be combined into a complete desktop environment.
 
-> **Build your desktop. Your Way. **
+> **Build your desktop. Your Way.**
 
 ## Project Status
 
