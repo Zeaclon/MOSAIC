@@ -743,6 +743,6 @@ The key architectural rule is:
 
 > **User-owned configuration, MOSAIC-provided resources, generated configuration, persistent state, cache data, backups, and runtime data must remain separate.**
 
-This separation allows MOSAIC to remain modular, reproducible, updateable, and safe for user customization while avoiding destructive ownership conflicts with the applications it manages.
+This separation allows MOSAIC to remain modular, reproducible, updatable, and safe for user customization while avoiding destructive ownership conflicts with the applications it manages.
 
 The exact implementation of individual directories may evolve as MOSAIC develops, but the ownership and lifecycle boundaries defined by this document should remain stable.
