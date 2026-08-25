@@ -98,7 +98,7 @@ This distinction is fundamental to MOSAIC's modular architecture.
 
 ---
 
-# 4. Development and Test Environment Classes
+## 4. Development and Test Environment Classes
 
 MOSAIC development and testing should not be treated as a single monolithic environment.
 
@@ -106,7 +106,7 @@ Different tests have different requirements.
 
 The project should distinguish between environment classes according to the type of validation being performed.
 
-## 4.1 Core Development Environment
+### 4.1 Core Development Environment
 
 The core development environment is the primary environment used by a developer to work on MOSAIC.
 
@@ -125,7 +125,7 @@ The core development environment should contain only the tooling required for th
 
 It must not require every implementation supported by MOSAIC to be installed.
 
-## 4.2 Integration Test Environment
+### 4.2 Integration Test Environment
 
 An integration test environment is used to validate interactions between MOSAIC components.
 
@@ -149,7 +149,7 @@ An integration environment may be identical to the core development environment 
 
 Where isolation is required, the integration environment may be created separately.
 
-## 4.3 Provider Test Environment
+### 4.3 Provider Test Environment
 
 A provider test environment is used to test a specific MOSAIC provider.
 
@@ -171,7 +171,7 @@ A developer working on one provider should not necessarily be required to instal
 
 Provider environments should be established only where required by the provider being developed or tested.
 
-## 4.4 Supported-Environment Validation Environment
+### 4.4 Supported-Environment Validation Environment
 
 A supported-environment validation environment is a clean environment used to verify that MOSAIC works on an environment it claims to support.
 
@@ -181,41 +181,41 @@ The supported-environment validation environment should be as close as practical
 
 ---
 
-# 5. Development Environment Principles
+## 5. Development Environment Principles
 
 The development and testing environments should follow the principles below.
 
-## 5.1 Reproducibility
+### 5.1 Reproducibility
 
 Another developer must be able to establish an equivalent environment by following documented project requirements.
 
 Development and test environments must not depend on undocumented personal configuration.
 
-## 5.2 Explicit Dependencies
+### 5.2 Explicit Dependencies
 
 Required tools and dependencies must be declared explicitly.
 
 A dependency must not be considered available merely because it happens to exist on a developer's workstation.
 
-## 5.3 Separation of Concerns
+### 5.3 Separation of Concerns
 
 Development dependencies, test dependencies, build dependencies, and runtime dependencies must be distinguished where practical.
 
 A dependency required only for development or testing must not automatically become a user installation dependency.
 
-## 5.4 Automation
+### 5.4 Automation
 
 Common development operations should be executable through documented and standardized commands.
 
 Developers should not be required to remember complex sequences of unrelated commands.
 
-## 5.5 IDE Independence
+### 5.5 IDE Independence
 
 MOSAIC must not require a particular IDE or editor.
 
 Project formatting, linting, building, and testing must be executable independently of an IDE.
 
-## 5.6 Environment-Specific Testing
+### 5.6 Environment-Specific Testing
 
 Tests must clearly identify the environment requirements necessary to execute them.
 
@@ -232,7 +232,7 @@ unless that requirement is part of the test.
 
 ---
 
-# 6. Supported Development Host
+## 6. Supported Development Host
 
 The primary development environment should be based on the MOSAIC supported base environment.
 
@@ -258,7 +258,7 @@ Additional development hosts may be supported in the future.
 
 ---
 
-# 7. Toolchain and Language Runtimes
+## 7. Toolchain and Language Runtimes
 
 The MOSAIC development documentation must identify all tools required to build, validate, and test the implemented project.
 
@@ -280,7 +280,7 @@ Tools and runtimes must only become required when they are required by an implem
 
 The project must not establish hypothetical future technologies as mandatory development requirements.
 
-## 7.1 Language-Specific Tooling
+### 7.1 Language-Specific Tooling
 
 When a language is formally adopted by MOSAIC, its development requirements must define:
 
@@ -299,25 +299,25 @@ These requirements should be documented as part of the relevant component or dev
 
 ---
 
-# 8. Dependency Management
+## 8. Dependency Management
 
 MOSAIC must maintain an authoritative and reproducible source of truth for declared dependencies.
 
 Dependencies should be distinguishable according to their purpose.
 
-## 8.1 Runtime Dependencies
+### 8.1 Runtime Dependencies
 
 Required by an installed MOSAIC component during normal operation.
 
-## 8.2 Build Dependencies
+### 8.2 Build Dependencies
 
 Required to build, compile, package, or otherwise construct MOSAIC.
 
-## 8.3 Test Dependencies
+### 8.3 Test Dependencies
 
 Required only to execute automated tests or test environments.
 
-## 8.4 Development Dependencies
+### 8.4 Development Dependencies
 
 Required for development activities such as formatting, linting, static analysis, or documentation generation.
 
@@ -329,7 +329,7 @@ The project must, however, ensure that declared dependencies can be reproduced w
 
 ---
 
-# 9. Formatting, Linting, and Static Analysis
+## 9. Formatting, Linting, and Static Analysis
 
 MOSAIC must define canonical formatting and validation tooling for each adopted implementation language and relevant project file format.
 
@@ -349,7 +349,7 @@ Documentation must also have defined validation and formatting requirements.
 
 ---
 
-# 10. Build System and Standard Commands
+## 10. Build System and Standard Commands
 
 MOSAIC must provide a consistent method for building and validating the project.
 
@@ -378,7 +378,7 @@ The requirement is that the project exposes a documented and consistent interfac
 
 ---
 
-# 11. Testing Strategy
+## 11. Testing Strategy
 
 MOSAIC requires multiple levels of testing.
 
@@ -386,7 +386,7 @@ A successful build does not establish that MOSAIC works correctly.
 
 Testing should progressively validate MOSAIC from individual components through to actual supported-environment behaviour.
 
-## 11.1 Static Validation
+### 11.1 Static Validation
 
 Static validation checks project correctness without executing the complete MOSAIC system.
 
@@ -401,7 +401,7 @@ Examples include:
 
 Static validation should normally be fast and suitable for routine local and continuous-integration execution.
 
-## 11.2 Unit Testing
+### 11.2 Unit Testing
 
 Unit tests validate individual components in isolation.
 
@@ -419,7 +419,7 @@ Unit tests should not require unrelated implementations or a complete graphical 
 
 Unit tests should normally be fast enough to execute routinely during development and continuous integration.
 
-## 11.3 Integration Testing
+### 11.3 Integration Testing
 
 Integration tests validate interactions between MOSAIC components.
 
@@ -445,7 +445,7 @@ Integration testing may require more dependencies than unit testing but should a
 
 ---
 
-# 12. Provider Testing
+## 12. Provider Testing
 
 MOSAIC providers translate abstract MOSAIC configuration into implementation-specific behaviour or configuration.
 
@@ -457,7 +457,7 @@ Providers should instead be evaluated according to the MOSAIC capabilities and c
 
 Provider testing should be divided into appropriate levels.
 
-## 12.1 Provider Translation Tests
+### 12.1 Provider Translation Tests
 
 Provider translation tests verify that a provider correctly translates MOSAIC configuration into its expected implementation-specific representation.
 
@@ -473,7 +473,7 @@ Implementation-specific output
 
 These tests should normally be executable without running the complete target desktop implementation.
 
-## 12.2 Provider Validation Tests
+### 12.2 Provider Validation Tests
 
 Provider validation tests verify that generated output satisfies the structural, syntactic, or other validation requirements that can be checked without performing a complete runtime behaviour test.
 
@@ -488,7 +488,7 @@ Examples may include:
 
 A provider validation test must not claim to verify runtime behaviour unless the target implementation is actually exercised.
 
-## 12.3 Provider Runtime Tests
+### 12.3 Provider Runtime Tests
 
 Provider runtime tests validate the generated result against the actual target implementation.
 
@@ -510,7 +510,7 @@ An implementation-specific runtime test should execute against the actual implem
 
 A generic Wayland environment must not automatically be treated as a replacement for the target compositor or implementation.
 
-## 12.4 Provider Behaviour Tests
+### 12.4 Provider Behaviour Tests
 
 Where practical, MOSAIC should verify observable behaviour rather than only successful process execution.
 
@@ -520,7 +520,7 @@ The exact behaviour-testing mechanism will depend on the capability and implemen
 
 ---
 
-# 13. Provider Conformance
+## 13. Provider Conformance
 
 Provider conformance refers to whether a provider correctly satisfies the MOSAIC provider contract and the capabilities it claims to support.
 
@@ -539,7 +539,7 @@ Equivalent behaviour does not require identical implementation-specific configur
 
 ---
 
-# 14. Implementation-Specific Test Environments
+## 14. Implementation-Specific Test Environments
 
 Some MOSAIC components cannot be fully tested without their target implementation being available.
 
@@ -563,7 +563,7 @@ Instead, developers and automated systems should establish the implementation-sp
 
 ---
 
-# 15. Test Environment Isolation
+## 15. Test Environment Isolation
 
 Different tests require different forms of isolation.
 
@@ -581,7 +581,7 @@ Potential mechanisms include:
 
 No single mechanism is suitable for every MOSAIC test.
 
-## 15.1 Containers
+### 15.1 Containers
 
 Containers may be appropriate for tests that require:
 
@@ -593,7 +593,7 @@ Containers may be appropriate for tests that require:
 
 Containers must not automatically be assumed to accurately reproduce a complete graphical Linux desktop or login session.
 
-## 15.2 Virtual Machines
+### 15.2 Virtual Machines
 
 Virtual machines may be appropriate where tests require:
 
@@ -612,7 +612,7 @@ The exact virtual-machine strategy should be selected when implementation requir
 
 ---
 
-# 16. Clean-Environment Validation
+## 16. Clean-Environment Validation
 
 MOSAIC must periodically validate that it can be built and tested without relying on accidental dependencies from a developer workstation.
 
@@ -630,7 +630,7 @@ Clean-environment validation should identify assumptions such as:
 
 Clean-environment validation should distinguish between at least two objectives.
 
-## 16.1 Clean Build and Test Validation
+### 16.1 Clean Build and Test Validation
 
 A clean environment should be able to:
 
@@ -650,7 +650,7 @@ Run applicable integration tests
 
 A container or other lightweight isolated environment may be suitable where the tests do not require a complete desktop system.
 
-## 16.2 Clean Supported-System Validation
+### 16.2 Clean Supported-System Validation
 
 A clean supported environment should be able to:
 
@@ -672,7 +672,7 @@ A virtual machine or equivalent full-system environment may be appropriate for t
 
 ---
 
-# 17. Test Environment Matrix
+## 17. Test Environment Matrix
 
 MOSAIC should maintain a test environment matrix as supported implementations are added.
 
@@ -696,7 +696,7 @@ A test must document any environment requirements that differ from the normal de
 
 ---
 
-# 18. Continuous Integration
+## 18. Continuous Integration
 
 The MOSAIC development process should eventually reproduce appropriate automated validation through continuous integration.
 
@@ -741,7 +741,7 @@ CI must not be treated as proof that all supported runtime behaviour has been te
 
 ---
 
-# 19. IDE and Editor Recommendations
+## 19. IDE and Editor Recommendations
 
 MOSAIC must remain IDE-agnostic.
 
@@ -766,7 +766,7 @@ Project-wide editor conventions should be represented through portable configura
 
 ---
 
-# 20. Development Workflow
+## 20. Development Workflow
 
 The standard MOSAIC development workflow should follow a predictable process.
 
@@ -814,7 +814,7 @@ Changes affecting supported runtime behaviour may require supported-environment 
 
 ---
 
-# 21. Future Documentation Structure
+## 21. Future Documentation Structure
 
 This document serves as the entry point for MOSAIC development-environment documentation.
 
@@ -845,7 +845,7 @@ The development environment document should remain the primary entry point and l
 
 ---
 
-# 22. Relationship to User Installation Documentation
+## 22. Relationship to User Installation Documentation
 
 Development documentation must remain separate from user installation documentation.
 
@@ -867,7 +867,7 @@ This separation prevents development and testing dependencies from being confuse
 
 ---
 
-# 23. Open Decisions
+## 23. Open Decisions
 
 The following implementation decisions remain open until MOSAIC adopts the relevant technologies:
 
@@ -896,7 +896,7 @@ The project should avoid selecting technologies solely because they appear in th
 
 ---
 
-# 24. Requirements for Completion
+## 24. Requirements for Completion
 
 Issue #5 should not be considered complete merely because a list of development packages exists.
 
