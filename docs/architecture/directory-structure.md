@@ -1,7 +1,7 @@
 # MOSAIC Directory Structure
 
-**Status**: Proposed
-**Issue**: #3 — Define MOSAIC directory structure
+**Status:** Proposed
+**Issue:** #3 — Define MOSAIC directory structure
 
 ## 1. Purpose
 
