@@ -62,7 +62,7 @@ Development and testing dependencies must not automatically become dependencies 
 
 A MOSAIC user should only require the components necessary for the MOSAIC configuration and implementation they choose to use.
 
-For example, a user using a supported Sway provider should not be required to install Hyprland solely because MOSAIC also supports a Hyprland provider.
+For example, if MOSAIC later adds a Sway provider, a user choosing that provider should not be required to install Hyprland solely because MOSAIC also supports a Hyprland provider.
 
 Users should not be required to install:
 
