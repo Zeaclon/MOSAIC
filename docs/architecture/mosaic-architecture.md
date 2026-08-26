@@ -1,8 +1,8 @@
 # MOSAIC Architecture
 
-**Status**: Proposed
+**Status:** Proposed
 
-**Issue**: #1 — Define MOSAIC architecture
+**Issue:** #1 — Define MOSAIC architecture
 
 ## 1. Purpose
 
