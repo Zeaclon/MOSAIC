@@ -1,7 +1,7 @@
-mod mosaic;
+use mosaic::initialize;
 
 fn main() {
     println!("MOSAIC");
 
-    mosaic::initialize();
+    initialize();
 }
