@@ -236,7 +236,7 @@ unless that requirement is part of the test.
 
 The primary development environment should be based on the MOSAIC supported base environment.
 
-The authoritative supported base environment is defined separately by the MOSAIC architecture documentation.
+The authoritative supported base environment is defined in [MOSAIC Supported Base Environment](../architecture/supported-base-environment.md).
 
 Development and implementation validation should therefore primarily target the currently supported MOSAIC environment.
 
