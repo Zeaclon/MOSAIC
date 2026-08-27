@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+        {{ config.title }}
+        {% endblock title %}
+    </title>
+
+    <link rel="stylesheet" href="{{ get_url(path='style.css') }}">
+
+    <script src="{{ get_url(path='elasticlunr.min.js') }}" defer></script>
+    <script src="{{ get_url(path='search_index.en.js') }}" defer></script>
+    <script src="{{ get_url(path='search.js') }}" defer></script>
+    <script src="{{ get_url(path='sidebar.js') }}" defer></script>
+    <script src="{{ get_url(path='theme.js') }}" defer></script>
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="site-header__inner">
+
+        <a
+                class="site-logo"
+                href="{{ get_url(path='@/_index.md') }}"
+                aria-label="MOSAIC Documentation home"
+        >
+            MOSAIC
+        </a>
+
+        <nav class="site-nav" aria-label="Primary navigation">
+
+            <a href="{{ get_url(path='@/_index.md') }}">
+                Docs
+            </a>
+
+            <form
+                    class="header-search"
+                    role="search"
+                    id="header-search-form"
+            >
+                <input
+                        id="header-search-input"
+                        name="q"
+                        type="search"
+                        placeholder="Search..."
+                        aria-label="Search..."
+                        autocomplete="off"
+                        spellcheck="false"
+                >
+
+                <div
+                        id="header-search-results"
+                        class="header-search-results"
+                        hidden
+                ></div>
+            </form>
+
+            <a
+                    href="https://github.com/Zeaclon/MOSAIC"
+                    target="_blank"
+                    rel="noopener noreferrer"
+            >
+                GitHub
+            </a>
+
+        </nav>
+
+    </div>
+</header>
+
+<div class="site-layout">
+
+    {% include "sidebar.html" %}
+
+    <main class="content">
+        {% block content %}{% endblock content %}
+    </main>
+
+</div>
+
+<footer class="site-footer">
+    <p>MOSAIC Documentation</p>
+</footer>
+
+</body>
+</html>

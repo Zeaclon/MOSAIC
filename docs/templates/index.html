@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ config.title }}
+{% endblock title %}
+
+{% block content %}
+<h1>{{ config.title }}</h1>
+
+<p>Welcome to the MOSAIC documentation.</p>
+
+<h2>Documentation</h2>
+
+<ul>
+    {% for subsection_path in section.subsections %}
+    {% set subsection = get_section(path=subsection_path) %}
+
+    <li>
+        <a href="{{ subsection.permalink }}">
+            {{ subsection.title }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock content %}

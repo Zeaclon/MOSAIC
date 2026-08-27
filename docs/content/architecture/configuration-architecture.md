@@ -1,3 +1,8 @@
++++
+title = "Configuration Architecture"
+weight = 2
++++
+
 # MOSAIC Configuration Architecture
 
 **Status:** Proposed  
@@ -678,7 +683,62 @@ MOSAIC should preserve the last known valid generated configuration where practi
 
 ---
 
-## 20. Runtime State vs Configuration
+## 20. Backup and Recovery
+
+MOSAIC configuration should be recoverable without requiring generated provider configuration to be treated as the source of truth.
+
+The primary configuration that must be protected is the user-owned MOSAIC configuration.
+
+MOSAIC should support safe recovery from configuration changes that result in an invalid or undesirable state.
+
+At minimum, the architecture should support:
+
+- Preserving the previous known-valid configuration before applying a change
+- Restoring the previous configuration after a failed application where practical
+- Keeping generated configuration reproducible from the restored MOSAIC configuration
+- Detecting invalid configuration before it is applied where possible
+- Providing clear diagnostics when automatic recovery cannot be performed
+
+The preferred recovery model is:
+
+```text
+Current valid configuration
+        ↓
+Create backup / snapshot
+        ↓
+Load new configuration
+        ↓
+Validate
+        ↓
+Resolve
+        ↓
+Generate
+        ↓
+Apply
+        ↓
+Success
+```
+
+If application fails:
+```text
+Application failure
+        ↓
+Preserve failure information
+        ↓
+Restore previous known-valid state where practical
+        ↓
+Report failure to user
+```
+
+Backups should protect user-owned configuration rather than treating provider-generated files as the authoritative backup source.
+
+MOSAIC should not require users to manually reconstruct their configuration from generated files after a failed configuration change.
+
+The exact backup mechanism, retention policy, and storage location are implementation details and may evolve as the configuration system is implemented.
+
+---
+
+## 21. Runtime State vs Configuration
 
 MOSAIC must distinguish configuration from runtime state.
 
@@ -700,7 +760,7 @@ This prevents transient desktop state from polluting reproducible configuration.
 
 ---
 
-## 21. Configuration Versioning
+## 22. Configuration Versioning
 
 MOSAIC configuration should carry a schema version.
 
@@ -732,7 +792,7 @@ Migrations should be deterministic and should avoid silently changing user inten
 
 ---
 
-## 22. Reproducibility
+## 23. Reproducibility
 
 A configuration should contain the information required to reproduce the declared MOSAIC desktop configuration on a compatible system.
 
@@ -756,7 +816,7 @@ Where exact reproduction is impossible because of environment differences, MOSAI
 
 ---
 
-## 23. Portability
+## 24. Portability
 
 Configuration should be portable between systems where the referenced components and providers are available.
 
@@ -778,7 +838,7 @@ Automatic provider substitution may be considered in the future, but it must be 
 
 ---
 
-## 24. Configuration API Boundary
+## 25. Configuration API Boundary
 
 The configuration system should expose a common internal service to MOSAIC interfaces such as the CLI and future GUI.
 
@@ -800,7 +860,7 @@ This ensures that changing configuration through the GUI produces the same resul
 
 ---
 
-## 25. Direct User Editing
+## 26. Direct User Editing
 
 Direct editing of MOSAIC configuration is a first-class supported workflow.
 
@@ -822,7 +882,7 @@ This supports experienced Linux users while allowing less technical users to man
 
 ---
 
-## 26. Configuration Ownership Rules
+## 27. Configuration Ownership Rules
 
 The following rules are normative for the architecture.
 
@@ -841,7 +901,7 @@ The following rules are normative for the architecture.
 
 ---
 
-## 27. Complete Configuration Lifecycle
+## 28. Complete Configuration Lifecycle
 
 The complete lifecycle is:
 
@@ -894,7 +954,7 @@ No stage should bypass validation or independently reinterpret configuration pre
 
 ---
 
-## 28. Architectural Boundaries
+## 29. Architectural Boundaries
 
 The configuration architecture reinforces the boundaries defined by the main MOSAIC architecture.
 
@@ -920,7 +980,7 @@ The user owns MOSAIC configuration. Generated configuration is managed as an imp
 
 ---
 
-## 29. Initial Implementation Constraints
+## 30. Initial Implementation Constraints
 
 The first implementation may make pragmatic choices for the initial Arch Linux and Hyprland environment.
 
@@ -938,7 +998,7 @@ The initial implementation should validate the model against real components suc
 
 ---
 
-## 30. Summary
+## 31. Summary
 
 MOSAIC configuration follows one central rule:
 

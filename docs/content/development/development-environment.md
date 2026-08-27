@@ -1,3 +1,8 @@
++++
+title = "Development Environment"
+weight = 1
++++
+
 # MOSAIC Development Environment
 
 **Status:** Proposed

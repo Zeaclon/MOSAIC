@@ -1,3 +1,8 @@
++++
+title = "Directory Structure"
+weight = 3
++++
+
 # MOSAIC Directory Structure
 
 **Status:** Proposed
@@ -112,7 +117,7 @@ Profiles, themes, layouts, and component definitions are MOSAIC resources rather
 
 MOSAIC source code belongs under:
 
-`src/`
+`../../../src`
 
 The source tree should contain the implementation of MOSAIC itself.
 
@@ -508,11 +513,11 @@ MOSAIC must never rely on cache data as the only copy of user configuration or p
 
 Project documentation belongs under:
 
-`docs/`
+`../..`
 
 Architecture documentation belongs under:
 
-`docs/architecture/`
+``
 
 Configuration documentation belongs under:
 
