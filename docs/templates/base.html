@@ -45,10 +45,7 @@
 
 <div class="site-layout">
 
-    <aside class="sidebar">
-        {% block sidebar %}
-        {% endblock sidebar %}
-    </aside>
+    {% include "sidebar.html" %}
 
     <main class="content">
         {% block content %}{% endblock content %}
@@ -57,9 +54,7 @@
 </div>
 
 <footer class="site-footer">
-    <p>
-        MOSAIC Documentation
-    </p>
+    <p>MOSAIC Documentation</p>
 </footer>
 
 </body>

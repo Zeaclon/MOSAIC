@@ -39,21 +39,21 @@ body {
 }
 
 .site-layout {
-  max-width: 1400px;
-  margin: 0 auto;
-
-  display: grid;
-  grid-template-columns: 250px minmax(0, 1fr);
+  display: flex;
+  width: 100%;
 }
 
 .sidebar {
+  width: 16rem;
+  flex-shrink: 0;
   border-right: 1px solid #ddd;
   padding: 2rem 1.5rem;
 }
 
 .content {
-  padding: 3rem;
-  max-width: 900px;
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 3rem;
 }
 
 .site-footer {

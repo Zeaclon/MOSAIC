@@ -1,0 +1,34 @@
+<aside class="sidebar">
+  <nav aria-label="Documentation">
+
+    <h2>Documentation</h2>
+
+    {% set root = get_section(path="_index.md") %}
+
+    <ul>
+      {% for subsection_path in root.subsections %}
+      {% set subsection = get_section(path=subsection_path) %}
+
+      <li>
+        <a href="{{ subsection.permalink }}">
+          {{ subsection.title }}
+        </a>
+
+        {% if subsection.pages %}
+        <ul>
+          {% for page in subsection.pages %}
+          <li>
+            <a href="{{ page.permalink }}">
+              {{ page.title }}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+      </li>
+      {% endfor %}
+    </ul>
+
+  </nav>
+</aside>
