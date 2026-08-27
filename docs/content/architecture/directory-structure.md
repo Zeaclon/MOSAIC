@@ -104,10 +104,10 @@ MOSAIC/
 The exact implementation language and package layout are outside the scope of this document.
 
 The important architectural distinction is:
-- `../../../src` contains the executable MOSAIC implementation.
+- `src/` contains the executable MOSAIC implementation.
 - `resources/` contains declarative MOSAIC resources supplied by the project.
-- `../..` contains project documentation.
-- `../../../tests` contains automated tests.
+- `docs/` contains project documentation.
+- `tests/` contains automated tests.
 
 Profiles, themes, layouts, and component definitions are MOSAIC resources rather than separate categories of core application code.
 

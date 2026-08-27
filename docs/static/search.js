@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    let searchGeneration = 0;
+
     const index = elasticlunr.Index.load(window.searchIndex);
 
     const headerForm = document.getElementById("header-search-form");
@@ -52,7 +54,6 @@ function search(index, query) {
 
 function setupHeaderSearch(index, form, input, container) {
     let activeIndex = -1;
-
     input.addEventListener("input", async () => {
         const query = input.value.trim();
 
@@ -63,12 +64,16 @@ function setupHeaderSearch(index, form, input, container) {
             return;
         }
 
+        const generation = ++searchGeneration;
+
         const results = search(index, query).slice(0, 5);
 
         await displayHeaderResults(
             results,
             query,
-            container
+            container,
+            generation,
+            () => searchGeneration
         );
     });
 
@@ -156,7 +161,13 @@ function setupHeaderSearch(index, form, input, container) {
 }
 
 
-async function displayHeaderResults(results, query, container) {
+async function displayHeaderResults(
+    results,
+    query,
+    container,
+    generation,
+    getCurrentGeneration
+) {
     container.innerHTML = "";
 
     if (results.length === 0) {
@@ -170,64 +181,53 @@ async function displayHeaderResults(results, query, container) {
         return;
     }
 
-
     for (const result of results) {
         const link = document.createElement("a");
 
         link.href = normalizeUrl(result.ref);
         link.className = "search-result";
 
-
         const title = document.createElement("div");
-
         title.className = "search-result-title";
 
-
         const excerpt = document.createElement("div");
-
         excerpt.className = "search-result-excerpt";
-
 
         try {
             const response = await fetch(result.ref);
             const html = await response.text();
 
+            if (generation !== getCurrentGeneration()) {
+                return;
+            }
+
             const documentPage = new DOMParser()
                 .parseFromString(html, "text/html");
 
-
             const heading = documentPage.querySelector("h1");
             const content = documentPage.querySelector(".content");
-
 
             const titleText = heading
                 ? heading.textContent.trim()
                 : result.ref;
 
-
             const excerptText = content
                 ? createExcerpt(content.textContent, query)
                 : "";
 
-
-            title.innerHTML = highlight(
-                titleText,
-                query
-            );
-
+            highlight(title, titleText, query);
 
             if (excerptText) {
-                excerpt.innerHTML = highlight(
-                    excerptText,
-                    query
-                );
+                highlight(excerpt, excerptText, query);
             }
-
 
         } catch {
             title.textContent = result.ref;
         }
 
+        if (generation !== getCurrentGeneration()) {
+            return;
+        }
 
         link.appendChild(title);
 
@@ -237,7 +237,6 @@ async function displayHeaderResults(results, query, container) {
 
         container.appendChild(link);
     }
-
 
     container.hidden = false;
 }
@@ -302,16 +301,28 @@ function normalizeUrl(url) {
 }
 
 
-function highlight(text, query) {
+function highlight(container, text, query) {
     const escapedQuery = query.replace(
         /[.*+?^${}()|[\]\\]/g,
         "\\$&"
     );
 
-    return text.replace(
-        new RegExp(`(${escapedQuery})`, "gi"),
-        "<mark>$1</mark>"
-    );
+    const regex = new RegExp(`(${escapedQuery})`, "gi");
+    const parts = text.split(regex);
+
+    container.textContent = "";
+
+    parts.forEach((part, index) => {
+        if (index % 2 === 1) {
+            const mark = document.createElement("mark");
+            mark.textContent = part;
+            container.appendChild(mark);
+        } else {
+            container.appendChild(
+                document.createTextNode(part)
+            );
+        }
+    });
 }
 
 
@@ -353,10 +364,7 @@ function displayPageResults(searchResults, query, container) {
 
         link.href = normalizeUrl(result.ref);
 
-        link.innerHTML = highlight(
-            result.ref,
-            query
-        );
+        highlight(link, result.ref, query);
 
         item.appendChild(link);
         list.appendChild(item);
