@@ -33,6 +33,46 @@
 
 
 /* =========================================================
+   Theme
+   ========================================================= */
+
+:root[data-theme="light"] {
+  --text: #1f2937;
+  --text-muted: #6b7280;
+  --background: #ffffff;
+  --surface: #f8fafc;
+  --border: #e5e7eb;
+  --link: #2563eb;
+  --link-hover: #1d4ed8;
+  --code-background: #1e1e2e;
+}
+
+:root[data-theme="dark"] {
+  --text: #e5e7eb;
+  --text-muted: #9ca3af;
+  --background: #111827;
+  --surface: #1f2937;
+  --border: #374151;
+  --link: #60a5fa;
+  --link-hover: #93c5fd;
+  --code-background: #1e1e2e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --text: #e5e7eb;
+    --text-muted: #9ca3af;
+    --background: #111827;
+    --surface: #1f2937;
+    --border: #374151;
+    --link: #60a5fa;
+    --link-hover: #93c5fd;
+    --code-background: #1e1e2e;
+  }
+}
+
+
+/* =========================================================
    Global
    ========================================================= */
 
@@ -76,7 +116,12 @@ a:hover {
    ========================================================= */
 
 .site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
   border-bottom: 1px solid var(--border);
+  background: var(--background);
 }
 
 .site-header__inner {
@@ -394,6 +439,52 @@ a:hover {
 .sidebar-pages {
   display: none;
   overflow: hidden;
+}
+
+/* Appearance */
+
+.sidebar-appearance {
+  margin-top: var(--space-8);
+  padding-top: var(--space-4);
+
+  border-top: 1px solid var(--border);
+}
+
+.sidebar-appearance label {
+  display: block;
+
+  margin-bottom: var(--space-2);
+  padding: 0 var(--space-2);
+
+  color: var(--text-muted);
+
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sidebar-appearance select {
+  width: 100%;
+
+  padding: 0.5rem 0.75rem;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+
+  background: var(--surface);
+  color: var(--text);
+
+  font: inherit;
+  font-size: 0.875rem;
+
+  cursor: pointer;
+}
+
+.sidebar-appearance select:focus {
+  outline: none;
+  border-color: var(--link);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.08);
 }
 
 
