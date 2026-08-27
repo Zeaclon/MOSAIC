@@ -14,16 +14,53 @@
 </head>
 
 <body>
-<header>
-    <nav>
-        <a href="{{ get_url(path='@/_index.md') }}">
+
+<header class="site-header">
+    <div class="site-header__inner">
+
+        <a class="site-logo" href="{{ get_url(path='@/_index.md') }}">
             MOSAIC
         </a>
-    </nav>
+
+        <nav class="site-nav">
+            <a href="{{ get_url(path='@/_index.md') }}">
+                Docs
+            </a>
+
+            <a href="#">
+                Showcase
+            </a>
+
+            <a href="#">
+                News
+            </a>
+
+            <a href="#">
+                GitHub
+            </a>
+        </nav>
+
+    </div>
 </header>
 
-<main>
-    {% block content %}{% endblock content %}
-</main>
+<div class="site-layout">
+
+    <aside class="sidebar">
+        {% block sidebar %}
+        {% endblock sidebar %}
+    </aside>
+
+    <main class="content">
+        {% block content %}{% endblock content %}
+    </main>
+
+</div>
+
+<footer class="site-footer">
+    <p>
+        MOSAIC Documentation
+    </p>
+</footer>
+
 </body>
 </html>

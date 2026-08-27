@@ -12,16 +12,14 @@
 <h2>Documentation</h2>
 
 <ul>
-    <li>
-        <a href="{{ get_url(path='architecture/') }}">
-            Architecture
-        </a>
-    </li>
+    {% for subsection_path in section.subsections %}
+    {% set subsection = get_section(path=subsection_path) %}
 
     <li>
-        <a href="{{ get_url(path='development/') }}">
-            Development
+        <a href="{{ subsection.permalink }}">
+            {{ subsection.title }}
         </a>
     </li>
+    {% endfor %}
 </ul>
 {% endblock content %}
