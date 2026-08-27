@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}
+Search — {{ config.title }}
+{% endblock title %}
+
+{% block content %}
+
+<script src="{{ get_url(path='elasticlunr.min.js') }}"></script>
+<script src="{{ get_url(path='search_index.en.js') }}"></script>
+<script src="{{ get_url(path='search.js') }}"></script>
+<section class="search-page">
+
+
+    <h1>Search</h1>
+
+    <form id="search-form" class="search-form">
+        <label for="search-input">
+            Search documentation
+        </label>
+
+        <div class="search-input-wrapper">
+            <input
+                    id="search-input"
+                    type="search"
+                    placeholder="Search documentation..."
+                    autocomplete="off"
+            >
+
+            <button type="submit">
+                Search
+            </button>
+        </div>
+    </form>
+
+    <div id="search-results" class="search-results" aria-live="polite">
+    </div>
+
+</section>
+
+{% endblock content %}

@@ -11,20 +11,28 @@
     </title>
 
     <link rel="stylesheet" href="{{ get_url(path='style.css') }}">
-</head>
 
-<script src="{{ get_url(path='sidebar.js') }}"></script>
+    <script src="{{ get_url(path='elasticlunr.min.js') }}" defer></script>
+    <script src="{{ get_url(path='search_index.en.js') }}" defer></script>
+    <script src="{{ get_url(path='search.js') }}" defer></script>
+    <script src="{{ get_url(path='sidebar.js') }}" defer></script>
+</head>
 
 <body>
 
 <header class="site-header">
     <div class="site-header__inner">
 
-        <a class="site-logo" href="{{ get_url(path='@/_index.md') }}">
+        <a
+                class="site-logo"
+                href="{{ get_url(path='@/_index.md') }}"
+                aria-label="MOSAIC Documentation home"
+        >
             MOSAIC
         </a>
 
-        <nav class="site-nav">
+        <nav class="site-nav" aria-label="Primary navigation">
+
             <a href="{{ get_url(path='@/_index.md') }}">
                 Docs
             </a>
@@ -37,9 +45,36 @@
                 News
             </a>
 
-            <a href="#">
+            <form
+                    class="header-search"
+                    role="search"
+                    id="header-search-form"
+            >
+                <input
+                        id="header-search-input"
+                        name="q"
+                        type="search"
+                        placeholder="Search..."
+                        aria-label="Search..."
+                        autocomplete="off"
+                        spellcheck="false"
+                >
+
+                <div
+                        id="header-search-results"
+                        class="header-search-results"
+                        hidden
+                ></div>
+            </form>
+
+            <a
+                    href="https://github.com/Zeaclon/MOSAIC"
+                    target="_blank"
+                    rel="noopener noreferrer"
+            >
                 GitHub
             </a>
+
         </nav>
 
     </div>
