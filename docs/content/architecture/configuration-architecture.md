@@ -1,9 +1,8 @@
 +++
-title = "Configuration Architecture"
+title = "MOSAIC Configuration Architecture"
 weight = 2
 +++
 
-# MOSAIC Configuration Architecture
 
 **Status:** Proposed  
 **Issue:** #2 — Define MOSAIC configuration architecture

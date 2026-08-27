@@ -1,9 +1,8 @@
 +++
-title = "Directory Structure"
+title = "MOSAIC Directory Structure"
 weight = 3
 +++
 
-# MOSAIC Directory Structure
 
 **Status:** Proposed
 

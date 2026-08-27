@@ -3,7 +3,6 @@ title = "MOSAIC Architecture"
 weight = 1
 +++
 
-# MOSAIC Architecture
 
 **Status:** Proposed
 
