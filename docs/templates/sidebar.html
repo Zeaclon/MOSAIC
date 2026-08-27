@@ -9,24 +9,50 @@
       {% for subsection_path in root.subsections %}
       {% set subsection = get_section(path=subsection_path) %}
 
+      {% set is_current_section = current_path is starting_with(subsection.path) %}
+
       <li>
-        <a href="{{ subsection.permalink }}">
-          {{ subsection.title }}
-        </a>
+        <div class="sidebar-section">
+          <a
+                  href="{{ subsection.permalink }}"
+                  {% if subsection.permalink == current_url %}class="active"{% endif %}
+          >
+            {{ subsection.title }}
+          </a>
+
+          {% if subsection.pages %}
+          <button
+                  class="sidebar-toggle"
+                  type="button"
+                  aria-label="Toggle {{ subsection.title }} navigation"
+                  aria-expanded="{{ is_current_section }}"
+          >
+            <span aria-hidden="true">›</span>
+          </button>
+          {% endif %}
+        </div>
 
         {% if subsection.pages %}
-        <ul>
+        <ul
+                class="sidebar-pages"
+                {% if is_current_section %}
+                style="display: block;"
+                {% endif %}
+        >
           {% for page in subsection.pages %}
           <li>
-            <a href="{{ page.permalink }}">
+            <a
+                    href="{{ page.permalink }}"
+                    {% if page.permalink == current_url %}class="active"{% endif %}
+            >
               {{ page.title }}
             </a>
           </li>
           {% endfor %}
         </ul>
         {% endif %}
-
       </li>
+
       {% endfor %}
     </ul>
 
