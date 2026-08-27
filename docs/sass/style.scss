@@ -81,7 +81,7 @@
 }
 
 html {
-  font-family: var(--font-body);
+  font-family: var(--font-body), sans-serif;;
   color: var(--text);
   background: var(--background);
 }
@@ -606,7 +606,7 @@ a:hover {
 }
 
 .content code {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), monospace;
   font-size: 0.875em;
 }
 
@@ -624,7 +624,7 @@ a:hover {
 }
 
 .content pre code {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), monospace;
   font-size: 0.875rem;
 }
 
