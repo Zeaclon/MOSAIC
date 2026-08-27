@@ -1,10 +1,10 @@
+let searchGeneration = 0;
+
 document.addEventListener("DOMContentLoaded", () => {
     if (!window.searchIndex || typeof elasticlunr === "undefined") {
         console.error("Search index or Elasticlunr is not available.");
         return;
     }
-
-    let searchGeneration = 0;
 
     const index = elasticlunr.Index.load(window.searchIndex);
 
@@ -54,17 +54,18 @@ function search(index, query) {
 
 function setupHeaderSearch(index, form, input, container) {
     let activeIndex = -1;
+
     input.addEventListener("input", async () => {
         const query = input.value.trim();
 
         activeIndex = -1;
 
+        const generation = ++searchGeneration;
+
         if (!query) {
             closeResults(container);
             return;
         }
-
-        const generation = ++searchGeneration;
 
         const results = search(index, query).slice(0, 5);
 
@@ -72,13 +73,12 @@ function setupHeaderSearch(index, form, input, container) {
             results,
             query,
             container,
-            generation,
-            () => searchGeneration
+            generation
         );
     });
 
 
-    form.addEventListener("submit", async (event) => {
+    form.addEventListener("submit", (event) => {
         event.preventDefault();
 
         const query = input.value.trim();
@@ -165,23 +165,26 @@ async function displayHeaderResults(
     results,
     query,
     container,
-    generation,
-    getCurrentGeneration
+    generation
 ) {
     container.innerHTML = "";
 
     if (results.length === 0) {
         container.innerHTML = `
-            <div class="search-no-results">
-                No results found.
-            </div>
-        `;
+<div class="search-no-results">
+    No results found.
+</div>
+`;
 
         container.hidden = false;
         return;
     }
 
     for (const result of results) {
+        if (generation !== searchGeneration) {
+            return;
+        }
+
         const link = document.createElement("a");
 
         link.href = normalizeUrl(result.ref);
@@ -197,7 +200,7 @@ async function displayHeaderResults(
             const response = await fetch(result.ref);
             const html = await response.text();
 
-            if (generation !== getCurrentGeneration()) {
+            if (generation !== searchGeneration) {
                 return;
             }
 
@@ -222,10 +225,14 @@ async function displayHeaderResults(
             }
 
         } catch {
+            if (generation !== searchGeneration) {
+                return;
+            }
+
             title.textContent = result.ref;
         }
 
-        if (generation !== getCurrentGeneration()) {
+        if (generation !== searchGeneration) {
             return;
         }
 
@@ -236,6 +243,10 @@ async function displayHeaderResults(
         }
 
         container.appendChild(link);
+    }
+
+    if (generation !== searchGeneration) {
+        return;
     }
 
     container.hidden = false;
