@@ -1,3 +1,8 @@
++++
+title = "Configuration Architecture"
+weight = 2
++++
+
 # MOSAIC Configuration Architecture
 
 **Status:** Proposed  

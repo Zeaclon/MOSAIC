@@ -1,3 +1,8 @@
++++
+title = "MOSAIC Architecture"
+weight = 1
++++
+
 # MOSAIC Architecture
 
 **Status:** Proposed
@@ -329,7 +334,7 @@ External application
 
 Generated configuration should not automatically become the user's source of truth.
 
-The detailed configuration architecture will be defined separately in [Configuration Architecture](./configuration-architecture.md).
+The detailed configuration architecture will be defined separately in [Configuration Architecture](configuration-architecture.md).
 
 ---
 

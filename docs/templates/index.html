@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ config.title }}
+{% endblock title %}
+
+{% block content %}
+<h1>{{ config.title }}</h1>
+
+<p>Welcome to the MOSAIC documentation.</p>
+
+<h2>Documentation</h2>
+
+<ul>
+    <li>
+        <a href="{{ get_url(path='architecture/') }}">
+            Architecture
+        </a>
+    </li>
+
+    <li>
+        <a href="{{ get_url(path='development/') }}">
+            Development
+        </a>
+    </li>
+</ul>
+{% endblock content %}
