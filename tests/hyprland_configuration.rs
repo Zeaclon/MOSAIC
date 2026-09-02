@@ -52,9 +52,9 @@ fn renders_three_monitor_configuration() {
         "-- Generated automatically.\n",
         "--\n",
         "\n",
-        "hl.monitor({ output = \"DP-3\", disabled = false, mode = \"2560x1440@144\", scale = 1, position = \"0x0\", transform = 0 })\n",
-        "hl.monitor({ output = \"DP-1\", disabled = false, mode = \"2560x1440@144\", scale = 1, position = \"2560x0\", transform = 0 })\n",
-        "hl.monitor({ output = \"DP-2\", disabled = false, mode = \"2560x1440@144\", scale = 1, position = \"5120x0\", transform = 3 })\n",
+        "hl.monitor({ output = \"DP-3\", mode = \"2560x1440@144\", scale = 1, position = \"0x0\" })\n",
+        "hl.monitor({ output = \"DP-1\", mode = \"2560x1440@144\", scale = 1, position = \"2560x0\" })\n",
+        "hl.monitor({ output = \"DP-2\", mode = \"2560x1440@144\", scale = 1, position = \"5120x0\", transform = 3 })\n",
     );
 
     assert_eq!(result, expected);

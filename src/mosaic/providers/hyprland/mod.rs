@@ -91,8 +91,8 @@ mod tests {
                 "-- Generated automatically.\n",
                 "--\n",
                 "\n",
-                "hl.monitor({ output = \"DP-3\", disabled = false, mode = \"2560x1440@144\", scale = 1, position = \"0x0\", transform = 0 })\n",
-                "hl.monitor({ output = \"DP-1\", disabled = false, mode = \"2560x1440@144\", scale = 1, position = \"2560x0\", transform = 0 })\n",
+                "hl.monitor({ output = \"DP-3\", mode = \"2560x1440@144\", scale = 1, position = \"0x0\" })\n",
+                "hl.monitor({ output = \"DP-1\", mode = \"2560x1440@144\", scale = 1, position = \"2560x0\" })\n",
             )
         );
     }

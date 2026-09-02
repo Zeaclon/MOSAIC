@@ -6,14 +6,29 @@ pub fn render_monitor(monitor: &Monitor) -> String {
     let mut fields = Vec::new();
 
     fields.push(format!("output = {}", lua_string(&monitor.output)));
-    fields.push(format!("disabled = {}", monitor.disabled));
-    fields.push(format!("mode = {}", render_mode(&monitor.mode)));
-    fields.push(format!("scale = {}", render_scale(&monitor.scale)));
-    fields.push(format!("position = {}", render_position(&monitor.position)));
-    fields.push(format!(
-        "transform = {}",
-        render_transform(&monitor.rotation, monitor.flip)
-    ));
+
+    if monitor.disabled {
+        fields.push("disabled = true".into());
+    }
+
+    if monitor.mode != MonitorMode::Preferred {
+        fields.push(format!("mode = {}", render_mode(&monitor.mode)));
+    }
+
+    if monitor.scale != MonitorScale::Auto {
+        fields.push(format!("scale = {}", render_scale(&monitor.scale)));
+    }
+
+    if monitor.position != MonitorPosition::Auto {
+        fields.push(format!("position = {}", render_position(&monitor.position)));
+    }
+
+    if monitor.rotation != Rotation::Degrees0 || monitor.flip {
+        fields.push(format!(
+            "transform = {}",
+            render_transform(&monitor.rotation, monitor.flip)
+        ));
+    }
 
     if let Some(mirror) = &monitor.mirror {
         fields.push(format!("mirror = {}", lua_string(mirror)));
@@ -96,7 +111,7 @@ mod tests {
 
         assert_eq!(
             result,
-            r#"hl.monitor({ output = "DP-3", disabled = false, mode = "2560x1440@144", scale = 1, position = "0x0", transform = 4 })"#
+            r#"hl.monitor({ output = "DP-3", mode = "2560x1440@144", scale = 1, position = "0x0", transform = 4 })"#
         );
     }
 
@@ -152,6 +167,116 @@ mod tests {
         assert_eq!(
             render_position(&MonitorPosition::Fixed { x: 2560, y: 0 }),
             "\"2560x0\""
+        );
+    }
+
+    #[test]
+    fn omits_default_monitor_properties() {
+        let monitor = Monitor {
+            output: "DP-3".into(),
+            ..Default::default()
+        };
+
+        let result = render_monitor(&monitor);
+
+        assert_eq!(result, r#"hl.monitor({ output = "DP-3" })"#);
+    }
+
+    #[test]
+    fn renders_disabled_monitor() {
+        let monitor = Monitor {
+            output: "DP-3".into(),
+            disabled: true,
+            ..Default::default()
+        };
+
+        assert_eq!(
+            render_monitor(&monitor),
+            r#"hl.monitor({ output = "DP-3", disabled = true })"#
+        );
+    }
+
+    #[test]
+    fn renders_non_default_mode() {
+        let monitor = Monitor {
+            output: "DP-3".into(),
+            mode: MonitorMode::Custom("2560x1440@144".into()),
+            ..Default::default()
+        };
+
+        assert_eq!(
+            render_monitor(&monitor),
+            r#"hl.monitor({ output = "DP-3", mode = "2560x1440@144" })"#
+        );
+    }
+
+    #[test]
+    fn renders_non_default_scale() {
+        let monitor = Monitor {
+            output: "DP-3".into(),
+            scale: MonitorScale::Fixed(1.5),
+            ..Default::default()
+        };
+
+        assert_eq!(
+            render_monitor(&monitor),
+            r#"hl.monitor({ output = "DP-3", scale = 1.5 })"#
+        );
+    }
+
+    #[test]
+    fn renders_non_default_position() {
+        let monitor = Monitor {
+            output: "DP-3".into(),
+            position: MonitorPosition::Fixed { x: 2560, y: 0 },
+            ..Default::default()
+        };
+
+        assert_eq!(
+            render_monitor(&monitor),
+            r#"hl.monitor({ output = "DP-3", position = "2560x0" })"#
+        );
+    }
+
+    #[test]
+    fn renders_non_default_rotation() {
+        let monitor = Monitor {
+            output: "DP-3".into(),
+            rotation: Rotation::Degrees270,
+            ..Default::default()
+        };
+
+        assert_eq!(
+            render_monitor(&monitor),
+            r#"hl.monitor({ output = "DP-3", transform = 3 })"#
+        );
+    }
+
+    #[test]
+    fn renders_flip_transform() {
+        let monitor = Monitor {
+            output: "DP-3".into(),
+            flip: true,
+            ..Default::default()
+        };
+
+        assert_eq!(
+            render_monitor(&monitor),
+            r#"hl.monitor({ output = "DP-3", transform = 4 })"#
+        );
+    }
+
+    #[test]
+    fn renders_mirror() {
+        let monitor = Monitor {
+            output: "DP-3".into(),
+            mirror: Some("DP-1".into()),
+            ..Default::default()
+        };
+
+        assert_eq!(
+            render_monitor(&monitor),
+            r#"hl.monitor({ output = "DP-3", mirror = "DP-1" })"#
         );
     }
 }
