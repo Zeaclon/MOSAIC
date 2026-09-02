@@ -1,3 +1,5 @@
+pub(crate) mod monitors;
+
 pub struct Configuration {
     // Configuration fields will be added as the configuration system is implemented.
 }
