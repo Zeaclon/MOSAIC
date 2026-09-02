@@ -1,5 +1,5 @@
 +++
-title = "Component Boundaries"
+title = "MOSAIC Component Boundaries"
 weight = 6
 +++
 
