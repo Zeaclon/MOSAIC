@@ -3,24 +3,25 @@ title = "MOSAIC Configuration Architecture"
 weight = 2
 +++
 
-
-**Status:** Proposed  
+**Status:** Active  
 **Issue:** #2 — Define MOSAIC configuration architecture
 
 ## 1. Purpose
 
-This document defines how MOSAIC stores, reads, validates, resolves, and applies configuration across its components.
+This document defines how MOSAIC represents, resolves, translates, generates, and eventually applies configuration across its components.
 
 The configuration architecture exists to support the principles established by the main MOSAIC architecture:
 
-- MOSAIC configuration describes **user intent**, rather than generated application files.
-- Components remain independently configurable and replaceable.
-- Providers translate MOSAIC configuration into implementation-specific configuration.
-- Users retain ownership and direct access to their configuration.
-- Generated configuration is an implementation artifact, not automatically the source of truth.
-- Configuration should be reproducible and portable where the target environment supports the requested components.
+* MOSAIC configuration describes **user intent**, rather than generated application files.
+* Components remain independently configurable and replaceable.
+* Providers translate MOSAIC configuration into implementation-specific configuration.
+* Users retain ownership and direct access to their configuration.
+* Generated configuration is an implementation artifact, not automatically the source of truth.
+* Configuration should be reproducible and portable where the target environment supports the requested components.
 
-This document defines the configuration model and lifecycle without prescribing implementation details that belong to individual providers.
+The architecture is designed to support a complete configuration lifecycle while allowing individual parts of that lifecycle to be implemented incrementally.
+
+The current implementation validates the core boundary between a MOSAIC configuration model and provider-generated configuration using the Hyprland monitor configuration as the first vertical slice.
 
 ---
 
@@ -28,9 +29,9 @@ This document defines the configuration model and lifecycle without prescribing 
 
 MOSAIC uses a declarative configuration model.
 
-The user declares the desired state of their desktop through MOSAIC configuration. MOSAIC then resolves that configuration, validates it, and passes the resulting component configuration to the appropriate providers.
+The user declares the desired state of their desktop through MOSAIC configuration. MOSAIC then resolves that configuration and passes the resulting component configuration to the appropriate providers.
 
-The conceptual flow is:
+The intended complete flow is:
 
 ```text
 User-owned configuration
@@ -64,11 +65,42 @@ The configuration explicitly supplied by the user, profile, theme, layout, or ot
 
 The effective configuration after MOSAIC has applied defaults, inheritance, references, and precedence rules.
 
-Providers consume the resolved configuration. They should not need to independently reconstruct MOSAIC's precedence rules.
+Providers consume the resolved configuration. They should not need to independently reconstruct MOSAIC's precedence or default-resolution rules.
 
 ---
 
-## 3. Configuration Scope
+## 3. Current Configuration Boundary
+
+The first implemented configuration path establishes the following boundary:
+
+```text
+Configuration
+      ↓
+Monitor Model
+      ↓
+Hyprland Provider
+      ↓
+Hyprland Monitor Renderer
+      ↓
+Generated Hyprland Configuration
+```
+
+The current implementation does not yet perform configuration loading, persistence, filesystem writing, or runtime application.
+
+This vertical slice exists to validate the architectural separation between:
+
+1. MOSAIC configuration semantics
+2. Component configuration models
+3. Provider-specific translation
+4. Generated implementation configuration
+
+The generated Hyprland configuration has been validated against a real Hyprland environment and is directly usable by Hyprland.
+
+This establishes the provider translation boundary as an implemented architectural concept rather than a purely theoretical one.
+
+---
+
+## 4. Configuration Scope
 
 MOSAIC configuration is divided into several conceptual scopes.
 
@@ -88,58 +120,58 @@ Global MOSAIC configuration
 
 These scopes represent different responsibilities rather than necessarily requiring different files or directories.
 
-### 3.1 Global configuration
+### 4.1 Global configuration
 
 Global configuration contains settings that apply to the MOSAIC environment as a whole.
 
 Examples may include:
 
-- Active profile
-- Active theme
-- Active layout
-- Configuration behavior
-- Global preferences
+* Active profile
+* Active theme
+* Active layout
+* Configuration behavior
+* Global preferences
 
-### 3.2 Profile configuration
+### 4.2 Profile configuration
 
 A profile describes the collection of components that make up a desktop configuration.
 
 A profile may select:
 
-- A compositor/window manager
-- A status bar
-- A launcher
-- Notifications
-- Lock screen
-- Idle daemon
-- Wallpaper system
-- Other supported components
+* A compositor/window manager
+* A status bar
+* A launcher
+* Notifications
+* Lock screen
+* Idle daemon
+* Wallpaper system
+* Other supported components
 
 A profile should reference component identities and configuration rather than embedding provider-specific implementation details.
 
-### 3.3 Component configuration
+### 4.3 Component configuration
 
 Component configuration describes the desired behavior of an individual MOSAIC component.
 
-For example, a status bar configuration may describe its position, visibility, modules, and desired appearance without requiring the configuration to be expressed as a Waybar-specific JSON file.
+For example, a monitor configuration may describe its output, position, mode, scale, rotation, and other desired properties without requiring the configuration itself to be expressed using Hyprland syntax.
 
-### 3.4 Theme configuration
+### 4.4 Theme configuration
 
 Themes provide visual configuration that may affect multiple components.
 
 A theme can supply values such as:
 
-- Colors
-- Fonts
-- Icons
-- Borders
-- Transparency
-- Wallpaper
-- Component styling
+* Colors
+* Fonts
+* Icons
+* Borders
+* Transparency
+* Wallpaper
+* Component styling
 
 Themes should not replace component configuration. They contribute values that are resolved alongside it.
 
-### 3.5 Layout configuration
+### 4.5 Layout configuration
 
 Layouts describe the conceptual arrangement of interface elements.
 
@@ -147,18 +179,18 @@ A layout may affect multiple components while remaining independent of their pro
 
 ---
 
-## 4. Configuration Storage
+## 5. Configuration Storage
 
 MOSAIC configuration should be stored as human-readable, declarative data.
 
 The initial implementation should prefer a format that is:
 
-- Human-readable
-- Easy to edit manually
-- Easy to parse reliably
-- Capable of representing nested configuration
-- Suitable for schema validation
-- Stable enough for version-controlled configuration
+* Human-readable
+* Easy to edit manually
+* Easy to parse reliably
+* Capable of representing nested configuration
+* Suitable for schema validation
+* Stable enough for version-controlled configuration
 
 The architecture does not permanently mandate one serialization format. The configuration model is the architectural contract; the storage format is an implementation detail.
 
@@ -166,46 +198,54 @@ For the initial implementation, the structured text format TOML will be used, pr
 
 Generated provider configuration does not need to use the same format as MOSAIC configuration.
 
-For example:
+A possible future structure is:
 
 ```text
 ~/.config/mosaic/
-├── config.toml              # User-owned MOSAIC configuration
+├── config.toml
 ├── profiles/
-│   └── desktop.toml         # Profile definitions
+│   └── desktop.toml
 ├── themes/
-│   └── default.toml         # Theme definitions
+│   └── default.toml
 ├── layouts/
-│   └── default.toml         # Layout definitions
-└── overrides/               # Optional explicit user overrides
+│   └── default.toml
+└── overrides/
 ```
 
 The exact directory structure may evolve as implementation begins, but the ownership distinction must remain.
 
 ---
 
-## 5. Configuration Ownership
+## 6. Configuration Ownership
 
 Every configuration value must have a clear owner.
 
 MOSAIC recognizes three important ownership categories.
 
-### 5.1 User-owned configuration
+### 6.1 User-owned configuration
 
 This is the user's declared MOSAIC configuration and is the primary source of intent.
 
 MOSAIC must not silently overwrite user-owned configuration when applying or regenerating configuration.
 
-### 5.2 Provider-generated configuration
+### 6.2 Resolved configuration
+
+Resolved configuration is an in-memory representation produced by MOSAIC after applying defaults, precedence, inheritance, and other resolution rules.
+
+Resolved configuration is not itself a persistent user-owned source.
+
+It represents the effective state that providers consume.
+
+### 6.3 Provider-generated configuration
 
 Provider-generated configuration is produced from the resolved MOSAIC model for consumption by external software.
 
 Examples include:
 
-- Waybar configuration
-- Hyprland configuration fragments
-- SwayNC configuration
-- Provider-specific scripts
+* Waybar configuration
+* Hyprland configuration fragments
+* SwayNC configuration
+* Provider-specific scripts
 
 Generated configuration is an implementation artifact.
 
@@ -213,7 +253,7 @@ The provider may regenerate it whenever the resolved configuration changes.
 
 ---
 
-## 6. Source of Truth
+## 7. Source of Truth
 
 The user's MOSAIC configuration is the source of truth for configuration **intent**.
 
@@ -243,11 +283,11 @@ MOSAIC should never silently import arbitrary changes from generated files back 
 
 ---
 
-## 7. Configuration Loading
+## 8. Configuration Loading
 
 MOSAIC configuration is loaded before validation or application.
 
-The loader is responsible for locating the configured sources, reading them, parsing them, and producing an in-memory configuration model.
+The loader is responsible for locating configured sources, reading them, parsing them, and producing an in-memory configuration model.
 
 The loader should not apply configuration or invoke providers.
 
@@ -265,45 +305,47 @@ Loading errors should identify the source and location of the error where possib
 
 Examples include:
 
-- Missing configuration file
-- Invalid syntax
-- Unsupported serialization format
-- Unreadable file
-- Duplicate or conflicting declarations
+* Missing configuration file
+* Invalid syntax
+* Unsupported serialization format
+* Unreadable file
+* Duplicate or conflicting declarations
 
 A missing optional source may fall back to its defined default. A missing required source must result in a clear configuration error.
 
+**Implementation status:** Future.
+
 ---
 
-## 8. Validation
+## 9. Validation
 
 Validation occurs before configuration is applied.
 
 MOSAIC should distinguish between **schema validation** and **semantic validation**.
 
-### 8.1 Schema validation
+### 9.1 Schema validation
 
 Schema validation checks whether configuration has the expected structure and data types.
 
 Examples:
 
-- Required fields exist
-- Values have the correct type
-- Enumerated values are valid
-- Object structure is valid
-- Unknown fields follow the project's compatibility policy
+* Required fields exist
+* Values have the correct type
+* Enumerated values are valid
+* Object structure is valid
+* Unknown fields follow the project's compatibility policy
 
-### 8.2 Semantic validation
+### 9.2 Semantic validation
 
 Semantic validation checks whether the requested configuration makes sense in the current MOSAIC environment.
 
 Examples:
 
-- A referenced component exists
-- A selected provider supports the requested feature
-- A layout references an available component
-- A profile does not contain incompatible components
-- A required dependency is available
+* A referenced component exists
+* A selected provider supports the requested feature
+* A layout references an available component
+* A profile does not contain incompatible components
+* A required dependency is available
 
 Validation should happen before providers are asked to generate or apply configuration.
 
@@ -325,29 +367,112 @@ Apply
 
 Invalid configuration must fail safely rather than partially applying an invalid state where practical.
 
+**Implementation status:** Future.
+
 ---
 
-## 9. Defaults
+## 10. Defaults
 
 MOSAIC supports defaults so that users do not need to specify every possible configuration value.
 
-Defaults should be defined by the layer that owns the behavior.
+Defaults must be defined by the layer that owns the behavior.
 
 For example:
 
-- MOSAIC core defaults belong to the core.
-- Component defaults belong to the component model.
-- Provider-specific defaults belong to the provider.
+* MOSAIC core defaults belong to the core.
+* Component defaults belong to the component model.
+* Provider-specific defaults belong to the provider.
 
-Provider defaults must not redefine MOSAIC-level semantics.
+MOSAIC semantic defaults and backend defaults are not necessarily the same thing.
 
-A provider may translate an omitted MOSAIC value into whatever implementation-specific value is required, but the resulting behavior must conform to the MOSAIC model.
+A MOSAIC component model defines the semantic state that an omitted value represents. The provider is then responsible for translating that semantic state into backend configuration.
+
+For example, the current monitor model defines defaults such as:
+
+```text
+disabled = false
+mode     = Preferred
+scale    = Auto
+position = Auto
+rotation = 0°
+flip     = false
+mirror   = none
+```
+
+These defaults belong to the MOSAIC monitor model.
+
+The Hyprland provider then determines how those states should be represented in generated Hyprland configuration.
+
+A provider may omit a value when omission produces the same effective semantic state. Otherwise, the provider must explicitly render the required value.
 
 Defaults are lower precedence than explicit user configuration.
 
 ---
 
-## 10. Configuration precedence
+## 11. Provider Translation
+
+Providers translate resolved MOSAIC configuration into implementation-specific configuration.
+
+The provider owns knowledge of the target application's syntax, representation, and implementation-specific behavior.
+
+The MOSAIC configuration model should not contain backend syntax merely to support a particular provider.
+
+Conceptually:
+
+```text
+MOSAIC configuration
+        ↓
+Resolved configuration
+        ↓
+Hyprland provider
+        ↓
+Hyprland configuration
+```
+
+The provider is responsible for answering:
+
+> How does this requested MOSAIC state need to be expressed to the target implementation?
+
+The provider should not be responsible for determining what the user meant.
+
+### 11.1 Default omission
+
+Providers should omit unnecessary properties from generated configuration when doing so preserves the requested semantic state.
+
+For the current Hyprland monitor provider:
+
+```text
+MOSAIC default        Generated output
+──────────────────    ─────────────────
+disabled = false      omitted
+mode = Preferred      omitted
+scale = Auto          omitted
+position = Auto       omitted
+rotation = 0°         omitted
+flip = false          omitted
+mirror = none         omitted
+```
+
+Non-default values are rendered explicitly.
+
+This keeps generated configuration concise while ensuring that the MOSAIC model remains the source of semantic meaning.
+
+### 11.2 Backend defaults
+
+Providers must not rely on undocumented backend behavior merely to define MOSAIC semantics.
+
+If the backend's default behavior differs from the semantic default defined by MOSAIC, the provider must explicitly render the value required to preserve MOSAIC behavior.
+
+The rule is therefore:
+
+```text
+MOSAIC owns semantic defaults.
+Provider owns backend translation.
+```
+
+---
+
+## 12. Configuration Precedence
 
 MOSAIC may combine configuration from multiple layers, including built-in defaults, component defaults, profiles, themes, user configuration, and explicit user overrides.
 
@@ -359,13 +484,17 @@ The default precedence is:
 
 Higher-precedence values override lower-precedence values where the configuration domain permits overriding.
 
-Configuration domains may restrict which layers are permitted to provide or override particular values. For example, a theme may provide colors and fonts but should not silently change the user's selected compositor.
+Configuration domains may restrict which layers are permitted to provide or override particular values.
+
+For example, a theme may provide colors and fonts but should not silently change the user's selected compositor.
 
 The precedence and ownership rules for non-trivial configuration domains must be documented.
 
+**Implementation status:** Architecture established; full resolution system is future implementation.
+
 ---
 
-## 11. User Overrides
+## 13. User Overrides
 
 User overrides provide an explicit mechanism for changing values supplied by profiles, themes, layouts, or defaults without modifying those reusable sources.
 
@@ -393,15 +522,17 @@ status bar background = dark
 
 Overrides should be explicit rather than relying on undocumented file ordering or provider behavior.
 
+**Implementation status:** Future.
+
 ---
 
-## 12. Merge Semantics
+## 14. Merge Semantics
 
 Configuration values must have defined merge behavior.
 
 MOSAIC should not assume that every configuration object can simply be deep-merged.
 
-Values should fall into one of several categories:
+Values should fall into one of several categories.
 
 ### Scalar values
 
@@ -425,10 +556,10 @@ Lists require an explicit merge strategy.
 
 Possible strategies include:
 
-- Replace
-- Append
-- Prepend
-- Merge by identifier
+* Replace
+* Append
+* Prepend
+* Merge by identifier
 
 The default should be **replace** unless a schema explicitly defines another behavior.
 
@@ -452,9 +583,11 @@ provider = "rofi"
 
 This allows configuration to refer to a component independently of its position in a file.
 
+**Implementation status:** Architecture established; implementation is future.
+
 ---
 
-## 13. Profiles, Themes, and Layouts
+## 15. Profiles, Themes, and Layouts
 
 Profiles, themes, and layouts are separate configuration sources that may contribute to the final configuration.
 
@@ -482,44 +615,48 @@ A layout should define presentation and arrangement.
 
 A theme or layout should not implicitly replace unrelated profile decisions.
 
-Where these concepts overlap, the configuration schema must define the ownership and merge semantics explicitly.
+Where these concepts overlap, the configuration schema must define ownership and merge semantics explicitly.
+
+**Implementation status:** Future.
 
 ---
 
-## 14. Component Configuration
+## 16. Component Configuration
 
 Each component has a MOSAIC-facing configuration model.
 
-A component configuration should contain only information meaningful at the MOSAIC abstraction level, plus explicitly defined extension points where provider-specific options are necessary.
+A component configuration should contain information meaningful at the MOSAIC abstraction level, plus explicitly defined extension points where provider-specific options are necessary.
 
-Conceptually:
+The current monitor model is an example of this boundary.
 
-```toml
-[component]
-id = "status-bar"
-provider = "waybar"
-enabled = true
-position = "top"
-modules = ["workspaces", "window", "clock"]
-```
+It describes concepts such as:
 
-The component model is passed to the selected provider.
+* Output
+* Enabled/disabled state
+* Display mode
+* Scale
+* Position
+* Rotation
+* Flip
+* Mirroring
 
-The provider translates it into its own representation:
+The monitor model does not contain Hyprland configuration syntax.
+
+Instead:
 
 ```text
-MOSAIC Status Bar Configuration
+MOSAIC Monitor Configuration
             ↓
-      Waybar Provider
+      Hyprland Provider
             ↓
-      waybar.jsonc
+      Hyprland Monitor Configuration
 ```
 
-The MOSAIC core should not contain Waybar's configuration syntax merely to support the Waybar provider.
+The MOSAIC core should not contain Hyprland's configuration syntax merely to support the Hyprland provider.
 
 ---
 
-## 15. Provider-Specific Configuration
+## 17. Provider-Specific Configuration
 
 Some external applications expose functionality that cannot reasonably be represented by the common MOSAIC model.
 
@@ -543,9 +680,48 @@ This preserves provider independence while still allowing advanced users to acce
 
 A provider-specific option must never be required for a core MOSAIC concept unless that concept itself is explicitly provider-dependent.
 
+**Implementation status:** Future.
+
 ---
 
-## 16. Generated Configuration
+## 18. Rendering Versus Writing
+
+Provider rendering and filesystem writing are separate responsibilities.
+
+A provider renderer converts a resolved configuration into a deterministic representation:
+
+```text
+Resolved Configuration
+        ↓
+Provider Renderer
+        ↓
+String / Generated Representation
+```
+
+A separate writer is responsible for writing that representation to the filesystem.
+
+This separation allows provider translation to be tested without requiring filesystem access or a running desktop environment.
+
+The renderer should:
+
+* Produce deterministic output
+* Avoid filesystem side effects
+* Be testable independently
+* Represent the complete requested provider configuration
+
+The writer will eventually be responsible for:
+
+* Selecting the output path
+* Checking file ownership
+* Writing generated configuration
+* Handling backups where required
+* Committing changes safely
+
+**Implementation status:** Provider rendering is implemented for the initial Hyprland monitor slice. Filesystem writing is future.
+
+---
+
+## 19. Generated Configuration
 
 Providers may generate configuration files, scripts, symlinks, or other implementation artifacts.
 
@@ -561,25 +737,32 @@ Resolved MOSAIC configuration
 
 Generated output should:
 
-- Be reproducible from the same resolved configuration
-- Be safe to regenerate
-- Be clearly identifiable as generated where practical
-- Avoid overwriting unrelated user files
-- Remain isolated from the user's source configuration
+* Be reproducible from the same resolved configuration
+* Be safe to regenerate
+* Be clearly identifiable as generated where practical
+* Avoid overwriting unrelated user files
+* Remain isolated from the user's source configuration
 
 Where possible, generated files should include a marker indicating that they are MOSAIC-managed.
 
-For example:
+The current Hyprland renderer produces:
 
 ```text
-# Generated by MOSAIC. Do not edit directly.
+-- This file is managed by MOSAIC.
+-- Do not edit this file manually.
+--
+-- MOSAIC version: <version>
+-- Generated automatically.
+--
 ```
 
-The exact marker is provider-specific.
+The MOSAIC application version is included as provenance information.
+
+The exact marker and format are provider-specific.
 
 ---
 
-## 17. User-Editable vs Generated Files
+## 20. User-Editable vs Generated Files
 
 MOSAIC must make the ownership of files understandable.
 
@@ -597,7 +780,7 @@ MOSAIC resolved state
 
 MOSAIC should avoid generating directly into a user's primary hand-maintained configuration file when a separate generated file or include mechanism is available.
 
-For example, a provider may generate:
+For example, a provider may eventually generate:
 
 ```text
 ~/.config/hypr/mosaic.conf
@@ -613,20 +796,22 @@ The user's configuration can then include the generated fragment where appropria
 
 This approach reduces destructive file ownership conflicts and makes manual customization practical.
 
+The exact integration mechanism is provider-specific.
+
 ---
 
-## 18. Application
+## 21. Application
 
 Applying configuration means translating the resolved configuration into the external state required to realize it.
 
 Application may involve:
 
-- Generating configuration files
-- Updating symlinks
-- Creating scripts
-- Reloading a provider
-- Restarting a component where required
-- Applying runtime settings
+* Generating configuration files
+* Updating symlinks
+* Creating scripts
+* Reloading a provider
+* Restarting a component where required
+* Applying runtime settings
 
 The provider owns the implementation-specific application process.
 
@@ -652,9 +837,11 @@ Reload / restart if required
 
 Where an application operation can fail, MOSAIC should report the failure and avoid claiming that the configuration was successfully applied.
 
+**Implementation status:** Future.
+
 ---
 
-## 19. Transaction and Failure Model
+## 22. Transaction and Failure Model
 
 Configuration application should be as atomic as practical.
 
@@ -680,9 +867,11 @@ If a provider cannot support atomic application, the limitation should be docume
 
 MOSAIC should preserve the last known valid generated configuration where practical so that a failed update does not unnecessarily leave the desktop unusable.
 
+**Implementation status:** Future.
+
 ---
 
-## 20. Backup and Recovery
+## 23. Backup and Recovery
 
 MOSAIC configuration should be recoverable without requiring generated provider configuration to be treated as the source of truth.
 
@@ -692,52 +881,19 @@ MOSAIC should support safe recovery from configuration changes that result in an
 
 At minimum, the architecture should support:
 
-- Preserving the previous known-valid configuration before applying a change
-- Restoring the previous configuration after a failed application where practical
-- Keeping generated configuration reproducible from the restored MOSAIC configuration
-- Detecting invalid configuration before it is applied where possible
-- Providing clear diagnostics when automatic recovery cannot be performed
+* Preserving the previous known-valid configuration before applying a change
+* Restoring the previous configuration after a failed application where practical
+* Keeping generated configuration reproducible from the restored MOSAIC configuration
+* Detecting invalid configuration before it is applied where possible
+* Providing clear diagnostics when automatic recovery cannot be performed
 
-The preferred recovery model is:
+The exact backup mechanism, retention policy, and storage location are implementation details.
 
-```text
-Current valid configuration
-        ↓
-Create backup / snapshot
-        ↓
-Load new configuration
-        ↓
-Validate
-        ↓
-Resolve
-        ↓
-Generate
-        ↓
-Apply
-        ↓
-Success
-```
-
-If application fails:
-```text
-Application failure
-        ↓
-Preserve failure information
-        ↓
-Restore previous known-valid state where practical
-        ↓
-Report failure to user
-```
-
-Backups should protect user-owned configuration rather than treating provider-generated files as the authoritative backup source.
-
-MOSAIC should not require users to manually reconstruct their configuration from generated files after a failed configuration change.
-
-The exact backup mechanism, retention policy, and storage location are implementation details and may evolve as the configuration system is implemented.
+**Implementation status:** Future.
 
 ---
 
-## 21. Runtime State vs Configuration
+## 24. Runtime State vs Configuration
 
 MOSAIC must distinguish configuration from runtime state.
 
@@ -747,11 +903,11 @@ Runtime state describes what is currently running.
 
 Examples of runtime state include:
 
-- Active workspace
-- Current window
-- Process IDs
-- Current display state
-- Temporary provider state
+* Active workspace
+* Current window
+* Process IDs
+* Current display state
+* Temporary provider state
 
 Runtime state should not normally be written back into the user's configuration unless explicitly requested or required for a supported feature.
 
@@ -759,7 +915,7 @@ This prevents transient desktop state from polluting reproducible configuration.
 
 ---
 
-## 22. Configuration Versioning
+## 25. Configuration Versioning
 
 MOSAIC configuration should carry a schema version.
 
@@ -789,9 +945,11 @@ Validation
 
 Migrations should be deterministic and should avoid silently changing user intent.
 
+**Implementation status:** Future.
+
 ---
 
-## 23. Reproducibility
+## 26. Reproducibility
 
 A configuration should contain the information required to reproduce the declared MOSAIC desktop configuration on a compatible system.
 
@@ -813,9 +971,11 @@ Equivalent generated configuration
 
 Where exact reproduction is impossible because of environment differences, MOSAIC should report those differences rather than silently producing an unrelated configuration.
 
+The current Hyprland renderer demonstrates deterministic generation: the same `Configuration` produces the same generated configuration text.
+
 ---
 
-## 24. Portability
+## 27. Portability
 
 Configuration should be portable between systems where the referenced components and providers are available.
 
@@ -837,7 +997,7 @@ Automatic provider substitution may be considered in the future, but it must be 
 
 ---
 
-## 25. Configuration API Boundary
+## 28. Configuration API Boundary
 
 The configuration system should expose a common internal service to MOSAIC interfaces such as the CLI and future GUI.
 
@@ -857,9 +1017,11 @@ Both should operate through the same configuration model and services.
 
 This ensures that changing configuration through the GUI produces the same result as changing it through the CLI or configuration files.
 
+**Implementation status:** Future.
+
 ---
 
-## 26. Direct User Editing
+## 29. Direct User Editing
 
 Direct editing of MOSAIC configuration is a first-class supported workflow.
 
@@ -881,28 +1043,33 @@ This supports experienced Linux users while allowing less technical users to man
 
 ---
 
-## 27. Configuration Ownership Rules
+## 30. Configuration Ownership Rules
 
 The following rules are normative for the architecture.
 
 1. **User configuration is the source of truth for user intent.**
-2. **Generated provider configuration is an implementation artifact.**
-3. **Providers must not modify unrelated component configuration.**
-4. **MOSAIC must not silently overwrite user-owned configuration.**
-5. **Generated files should be isolated from hand-maintained files where practical.**
-6. **Defaults must have lower precedence than explicit user configuration.**
-7. **Precedence must be deterministic.**
-8. **Merge behavior must be defined by the configuration schema.**
-9. **Configuration must be validated before application.**
-10. **Provider-specific configuration must remain inside a provider boundary.**
-11. **Runtime state must not become configuration implicitly.**
-12. **CLI and GUI interfaces must use the same configuration services and resolution rules.**
+2. **Resolved configuration represents effective MOSAIC state and is not itself a persistent source of truth.**
+3. **Generated provider configuration is an implementation artifact.**
+4. **Providers must not modify unrelated component configuration.**
+5. **MOSAIC must not silently overwrite user-owned configuration.**
+6. **Generated files should be isolated from hand-maintained files where practical.**
+7. **Defaults must have lower precedence than explicit user configuration.**
+8. **MOSAIC semantic defaults belong to the model that owns the behavior.**
+9. **Providers own translation of MOSAIC semantics into backend-specific representation.**
+10. **Precedence must be deterministic.**
+11. **Merge behavior must be defined by the configuration schema.**
+12. **Configuration must be validated before application.**
+13. **Provider-specific configuration must remain inside a provider boundary.**
+14. **Runtime state must not become configuration implicitly.**
+15. **CLI and GUI interfaces must use the same configuration services and resolution rules.**
+16. **Provider renderers should be deterministic and free of filesystem side effects.**
+17. **Generated configuration must not silently become the source of truth.**
 
 ---
 
-## 28. Complete Configuration Lifecycle
+## 31. Complete Configuration Lifecycle
 
-The complete lifecycle is:
+The intended complete lifecycle is:
 
 ```text
 ┌──────────────────────┐
@@ -951,9 +1118,25 @@ Each stage has a distinct responsibility.
 
 No stage should bypass validation or independently reinterpret configuration precedence.
 
+The currently implemented portion is:
+
+```text
+Configuration
+      ↓
+Monitor Model
+      ↓
+Hyprland Provider
+      ↓
+Hyprland Renderer
+      ↓
+Generated Configuration
+```
+
+The remaining lifecycle stages will be implemented incrementally.
+
 ---
 
-## 29. Architectural Boundaries
+## 32. Architectural Boundaries
 
 The configuration architecture reinforces the boundaries defined by the main MOSAIC architecture.
 
@@ -967,11 +1150,15 @@ The core coordinates components through defined interfaces.
 
 ### Component ↔ Provider
 
-A component defines the MOSAIC-level behavior. A provider implements that behavior using a specific technology.
+A component defines MOSAIC-level behavior. A provider implements that behavior using a specific technology.
+
+### Provider ↔ Renderer
+
+The provider owns implementation-specific translation. The renderer converts that translation into deterministic output without performing filesystem operations.
 
 ### Provider ↔ External Software
 
-The provider owns translation and application of implementation-specific configuration.
+The provider owns the eventual application of implementation-specific configuration to external software.
 
 ### User ↔ Generated Configuration
 
@@ -979,25 +1166,28 @@ The user owns MOSAIC configuration. Generated configuration is managed as an imp
 
 ---
 
-## 30. Initial Implementation Constraints
+## 33. Initial Implementation Constraints
 
 The first implementation may make pragmatic choices for the initial Arch Linux and Hyprland environment.
 
 These may include:
 
-- A specific serialization format
-- A concrete configuration directory
-- Provider-specific generated files
-- A limited set of supported merge operations
-- A limited component schema
+* A specific serialization format
+* A concrete configuration directory
+* Provider-specific generated files
+* A limited set of supported merge operations
+* A limited component schema
+* A limited set of provider capabilities
 
 These are implementation decisions, not reasons to weaken the architectural boundaries defined here.
 
 The initial implementation should validate the model against real components such as Hyprland and Waybar while keeping their provider-specific behavior outside the MOSAIC core.
 
+The current Hyprland monitor implementation demonstrates this approach: the MOSAIC monitor model represents user intent while the Hyprland provider translates that model into Hyprland-specific configuration.
+
 ---
 
-## 31. Summary
+## 34. Summary
 
 MOSAIC configuration follows one central rule:
 
@@ -1020,11 +1210,15 @@ Component
         ↓
 Provider
         ↓
+Renderer
+        ↓
 Generated configuration
         ↓
 External software
 ```
 
-This separation ensures that configuration remains modular, reproducible, maintainable, provider-independent, and user-owned while still allowing MOSAIC to generate and manage the concrete configuration required by Linux desktop software.
+The first implementation has validated this separation through the Hyprland monitor configuration.
 
-The configuration architecture should evolve alongside implementation, but changes to these ownership, precedence, and abstraction boundaries should be deliberate and documented.
+The configuration architecture should evolve alongside implementation, but changes to ownership, precedence, defaults, abstraction boundaries, or provider responsibilities should be deliberate and documented.
+
+The architecture describes the intended complete system; implementation should proceed incrementally through independently testable vertical slices.

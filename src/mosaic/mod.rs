@@ -1,8 +1,8 @@
-mod components;
-mod configuration;
-mod core;
-mod providers;
-mod runtime;
+pub(crate) mod components;
+pub(crate) mod configuration;
+pub(crate) mod core;
+pub(crate) mod providers;
+pub(crate) mod runtime;
 
 pub fn initialize() {
     println!("MOSAIC initialized");
