@@ -3,7 +3,7 @@ title = "MOSAIC Configuration Architecture"
 weight = 2
 +++
 
-**Status:** Active
+**Status:** Active  
 **Issue:** #2 — Define MOSAIC configuration architecture
 
 ## 1. Purpose
