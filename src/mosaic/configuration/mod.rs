@@ -1,12 +1,16 @@
 pub(crate) mod monitors;
 
+pub use monitors::{Monitor, MonitorMode, MonitorPosition, MonitorScale, Rotation};
+
 pub struct Configuration {
-    // Configuration fields will be added as the configuration system is implemented.
+    pub monitors: Vec<Monitor>,
 }
 
 impl Configuration {
     pub fn new() -> Self {
-        Self {}
+        Self {
+            monitors: Vec::new(),
+        }
     }
 }
 

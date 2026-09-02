@@ -10,7 +10,10 @@ pub fn render_monitor(monitor: &Monitor) -> String {
     fields.push(format!("mode = {}", render_mode(&monitor.mode)));
     fields.push(format!("scale = {}", render_scale(&monitor.scale)));
     fields.push(format!("position = {}", render_position(&monitor.position)));
-    fields.push(format!("transform = {}", render_transform(&monitor.rotation, monitor.flip)));
+    fields.push(format!(
+        "transform = {}",
+        render_transform(&monitor.rotation, monitor.flip)
+    ));
 
     if let Some(mirror) = &monitor.mirror {
         fields.push(format!("mirror = {}", lua_string(mirror)));
@@ -32,10 +35,9 @@ fn render_mode(mode: &MonitorMode) -> String {
 fn render_scale(scale: &MonitorScale) -> String {
     match scale {
         MonitorScale::Auto => lua_string("auto"),
-        MonitorScale::Fixed(value) => value.to_string()
+        MonitorScale::Fixed(value) => value.to_string(),
     }
 }
-
 
 fn render_position(position: &MonitorPosition) -> String {
     match position {
@@ -74,17 +76,17 @@ fn lua_string(value: &str) -> String {
 mod tests {
     use super::*;
     use crate::mosaic::configuration::monitors::{
-        Monitor, MonitorMode, MonitorPosition, MonitorScale, Rotation
+        Monitor, MonitorMode, MonitorPosition, MonitorScale, Rotation,
     };
 
     #[test]
     fn renders_monitor() {
-        let monitor = Monitor{
+        let monitor = Monitor {
             output: "DP-3".into(),
             disabled: false,
             mode: MonitorMode::Custom("2560x1440@144".into()),
             scale: MonitorScale::Fixed(1.0),
-            position: MonitorPosition::Fixed { x: 0, y: 0},
+            position: MonitorPosition::Fixed { x: 0, y: 0 },
             rotation: Rotation::Degrees0,
             flip: true,
             mirror: None,
@@ -100,61 +102,31 @@ mod tests {
 
     #[test]
     fn rotation_maps_to_hyprland_transform() {
-        assert_eq!(
-            render_transform(&Rotation::Degrees0, false),
-            0
-        );
+        assert_eq!(render_transform(&Rotation::Degrees0, false), 0);
 
-        assert_eq!(
-            render_transform(&Rotation::Degrees90, false),
-            1
-        );
+        assert_eq!(render_transform(&Rotation::Degrees90, false), 1);
 
-        assert_eq!(
-            render_transform(&Rotation::Degrees180, false),
-            2
-        );
+        assert_eq!(render_transform(&Rotation::Degrees180, false), 2);
 
-        assert_eq!(
-            render_transform(&Rotation::Degrees270, false),
-            3
-        );
+        assert_eq!(render_transform(&Rotation::Degrees270, false), 3);
     }
 
     #[test]
     fn horizontal_flip_maps_to_hyprland_transform() {
-        assert_eq!(
-            render_transform(&Rotation::Degrees0, true),
-            4
-        );
+        assert_eq!(render_transform(&Rotation::Degrees0, true), 4);
 
-        assert_eq!(
-            render_transform(&Rotation::Degrees90, true),
-            5
-        );
+        assert_eq!(render_transform(&Rotation::Degrees90, true), 5);
 
-        assert_eq!(
-            render_transform(&Rotation::Degrees180, true),
-            6
-        );
+        assert_eq!(render_transform(&Rotation::Degrees180, true), 6);
 
-        assert_eq!(
-            render_transform(&Rotation::Degrees270, true),
-            7
-        );
+        assert_eq!(render_transform(&Rotation::Degrees270, true), 7);
     }
 
     #[test]
     fn renders_monitor_mode() {
         assert_eq!(render_mode(&MonitorMode::Preferred), "\"preferred\"");
-        assert_eq!(
-            render_mode(&MonitorMode::HighResolution),
-            "\"highres\""
-        );
-        assert_eq!(
-            render_mode(&MonitorMode::HighRefreshRate),
-            "\"highrr\""
-        );
+        assert_eq!(render_mode(&MonitorMode::HighResolution), "\"highres\"");
+        assert_eq!(render_mode(&MonitorMode::HighRefreshRate), "\"highrr\"");
         assert_eq!(render_mode(&MonitorMode::MaxWidth), "\"maxwidth\"");
         assert_eq!(
             render_mode(&MonitorMode::Custom("2560x1440@144".into())),
@@ -170,10 +142,7 @@ mod tests {
 
     #[test]
     fn renders_monitor_position() {
-        assert_eq!(
-            render_position(&MonitorPosition::Auto),
-            "\"auto\""
-        );
+        assert_eq!(render_position(&MonitorPosition::Auto), "\"auto\"");
 
         assert_eq!(
             render_position(&MonitorPosition::AutoRight),
