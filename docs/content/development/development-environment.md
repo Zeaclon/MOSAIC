@@ -1,9 +1,8 @@
 +++
-title = "Development Environment"
+title = "MOSAIC Development Environment"
 weight = 1
 +++
 
-# MOSAIC Development Environment
 
 **Status:** Proposed
 

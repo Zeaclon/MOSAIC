@@ -1,9 +1,8 @@
 +++
-title = "Supported Base Environment"
+title = "MOSAIC Supported Base Environment"
 weight = 4
 +++
 
-# MOSAIC Supported Base Environment
 
 **Status:** Proposed
 
